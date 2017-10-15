@@ -1,0 +1,13 @@
+<component name="ArtifactManager">
+  <artifact type="exploded-war" name="Bajuku-pos:war exploded">
+    <output-path>$PROJECT_DIR$/out/artifacts/Bajuku_pos_war_exploded</output-path>
+    <root id="root">
+      <element id="javaee-facet-resources" facet="Bajuku-pos/web/Web" />
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="Bajuku-pos" />
+        </element>
+      </element>
+    </root>
+  </artifact>
+</component>
