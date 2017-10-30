@@ -1,6 +1,7 @@
 *.jar
 
 out/
+target/
 bootstrap-3.3.7/
 
 .idea

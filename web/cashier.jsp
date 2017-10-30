@@ -11,6 +11,10 @@
     <title>Title</title>
 </head>
 <body>
-    ${user}
+    <div class="navbar navbar-fixed-top">
+        <div class="container-fluid">
+            <div class="navbar-header"></div>
+        </div>
+    </div>
 </body>
 </html>
