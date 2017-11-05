@@ -13,7 +13,7 @@ public class UserRepository {
 
     private ArrayList<UserModel> getObject(ResultSet rs) throws SQLException{
         UserModel model=null;
-        ArrayList<UserModel> models=new ArrayList<>();
+        ArrayList<UserModel> models=new ArrayList<UserModel>();
         while (rs.next()){
             model=new UserModel();
             model.setId(rs.getInt("id"));
@@ -52,7 +52,7 @@ public class UserRepository {
     }
 
     public ArrayList<UserModel> getAllUser() throws SQLException{
-        ArrayList<UserModel> userList=new ArrayList<>();
+        ArrayList<UserModel> userList;
         conn= Dbconnection.createConnection();
         sql="SELECT * FROM user_tb";
 
@@ -64,5 +64,64 @@ public class UserRepository {
         stmt.close();
         conn.close();
         return userList;
+    }
+
+    private boolean executeStatement() throws SQLException{
+        if(stmt.execute()){
+            conn.commit();
+            stmt.close();
+            conn.close();
+            return true;
+        }
+        else{
+            conn.rollback();
+            stmt.close();
+            conn.close();
+            return false;
+        }
+    }
+
+    public boolean insertUser(UserModel model) throws SQLException{
+        conn= Dbconnection.createConnection();
+        sql="INSERT INTO user_tb (username, user_fullname, password, log_time, user_role) " +
+                "VALUES (?, ?, md5(?), CURRENT_TIMESTAMP , ?)";
+
+        stmt= conn.prepareStatement(sql);
+        stmt.setString(1, model.getUsername());
+        stmt.setString(2, model.getFullname());
+        stmt.setString(3, model.getPassword());
+        stmt.setString(4, model.getUser_role());
+
+        return executeStatement();
+    }
+
+    public boolean deleteUser(int id) throws SQLException{
+        conn= Dbconnection.createConnection();
+        conn.setAutoCommit(false);
+        sql="DELETE  FROM user_tb WHERE id= ?";
+
+        stmt= conn.prepareStatement(sql);
+        stmt.setInt(1, id);
+        return executeStatement();
+    }
+
+    public boolean updateUser(UserModel model) throws SQLException{
+        conn= Dbconnection.createConnection();
+        conn.setAutoCommit(false);
+        sql="UPDATE user_tb " +
+                "SET username= ?," +
+                "password= ?," +
+                "log_time= CURRENT_TIMESTAMP ," +
+                "user_fullname= ?," +
+                "user_role= ?" +
+                "WHERE user_id= ? ";
+
+        stmt=conn.prepareStatement(sql);
+        stmt.setString(1, model.getUsername());
+        stmt.setString(2, model.getPassword());
+        stmt.setString(3, model.getFullname());
+        stmt.setString(4, model.getUser_role());
+        stmt.setInt(5, model.getId());
+        return executeStatement();
     }
 }
