@@ -7,8 +7,9 @@ import java.sql.*;
 import java.util.ArrayList;
 
 public class UserRepository {
-    private Connection conn=null;
+    private Connection conn= Dbconnection.createConnection();
     private PreparedStatement stmt=null;
+    private PreparedStatement log=null;
     private String sql=null;
 
     private ArrayList<UserModel> getObject(ResultSet rs) throws SQLException{
@@ -35,6 +36,7 @@ public class UserRepository {
         stmt= conn.prepareStatement(sql);
         stmt.setString(1, user);
         stmt.setString(2, password);
+
         ResultSet rs= stmt.executeQuery();
         if(rs.next()){
             model.setId(rs.getInt("id"));
@@ -44,6 +46,15 @@ public class UserRepository {
             model.setUser_role(rs.getString("user_role"));
             model.setLog_time(new Timestamp(System.currentTimeMillis()));
         }
+
+        if(model!=null) {
+            String desc = model.getFullname() + " " + model.getUser_role();
+            String batch = "INSERT INTO log_tb VALUES (" + model.getId() + ", 'login', CURRENT_TIMESTAMP , '" + desc + "')";
+            log = conn.prepareStatement(batch);
+            log.execute();
+            log.close();
+        }
+
         rs.close();
         stmt.close();
         conn.close();
@@ -53,7 +64,6 @@ public class UserRepository {
 
     public ArrayList<UserModel> getAllUser() throws SQLException{
         ArrayList<UserModel> userList;
-        conn= Dbconnection.createConnection();
         sql="SELECT * FROM user_tb";
 
         stmt= conn.prepareStatement(sql);
@@ -82,7 +92,7 @@ public class UserRepository {
     }
 
     public boolean insertUser(UserModel model) throws SQLException{
-        conn= Dbconnection.createConnection();
+        conn.setAutoCommit(false);
         sql="INSERT INTO user_tb (username, user_fullname, password, log_time, user_role) " +
                 "VALUES (?, ?, md5(?), CURRENT_TIMESTAMP , ?)";
 
@@ -96,7 +106,6 @@ public class UserRepository {
     }
 
     public boolean deleteUser(int id) throws SQLException{
-        conn= Dbconnection.createConnection();
         conn.setAutoCommit(false);
         sql="DELETE  FROM user_tb WHERE id= ?";
 
@@ -106,7 +115,6 @@ public class UserRepository {
     }
 
     public boolean updateUser(UserModel model) throws SQLException{
-        conn= Dbconnection.createConnection();
         conn.setAutoCommit(false);
         sql="UPDATE user_tb " +
                 "SET username= ?," +
@@ -124,4 +132,5 @@ public class UserRepository {
         stmt.setInt(5, model.getId());
         return executeStatement();
     }
+
 }

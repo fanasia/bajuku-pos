@@ -10,9 +10,9 @@
 <html>
   <head>
     <title>Bajuku POS-online POS system</title>
-      <link rel="stylesheet" type="text/css" href="css/bootstrap-3.3.7/dist/css/bootstrap.min.css">
-      <link rel="stylesheet" href="css/index.css">
-      <script src="css/bootstrap-3.3.7/dist/js/bootstrap.min.js"></script>
+      <link rel="stylesheet" type="text/css" href="../css/bootstrap-3.3.7/dist/css/bootstrap.min.css">
+      <link rel="stylesheet" href="../css/index.css">
+      <script src="../css/bootstrap-3.3.7/dist/js/bootstrap.min.js"></script>
   </head>
   <body>
     <c:set var="display" value="hidden"/>

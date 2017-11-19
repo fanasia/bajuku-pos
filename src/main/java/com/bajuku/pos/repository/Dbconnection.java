@@ -2,6 +2,7 @@ package com.bajuku.pos.repository;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 
 public class Dbconnection {
     private static Connection conn=null;
@@ -21,4 +22,5 @@ public class Dbconnection {
         }
         return null;
     }
+
 }

@@ -1,0 +1,27 @@
+.symbol{
+    margin-right: 10px;
+}
+#left-col{
+    border-right: solid 1px #0D3349;
+}
+#customer-info{
+    padding: 20px;
+}
+#cart-header{
+    margin-bottom: 0;
+}
+#cart-body{
+    overflow-y: scroll;
+}
+#cart-info{
+    margin-top: 20px;
+    display: block;
+}
+.remove-btn{
+    text-align: center;
+}
+
+#product-container{
+    margin-top: 20px;
+    display: block;
+}
