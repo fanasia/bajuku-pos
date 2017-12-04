@@ -1,7 +1,11 @@
+body{
+    background-color: #0D3349;
+}
 #form-login{
     margin: 50px auto;
     width: 300px; !important;
+    background-color: #FFFFFF;
 }
-#form-login .form-control{
-
+.login-btn{
+    margin-top: 10px; !important;
 }

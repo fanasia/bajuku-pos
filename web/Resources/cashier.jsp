@@ -16,22 +16,7 @@
     <link rel="stylesheet" href="../css/cashier.css">
 </head>
 <body>
-    <nav class="navbar">
-        <div class="container-fluid">
-            <div class="navbar-header">
-                <a class="navbar-brand" href="">Bajuku POS</a>
-            </div>
-            <ul class="nav navbar-nav navbar-right">
-                <li class="dropdown">
-                    <a class="dropdown-toggle" data-toggle="dropdown" href="">Hello, <c:out value="${user}"/></a>
-                    <ul class="dropdown-menu">
-                        <li><a href=""></a></li>
-                    </ul>
-                </li>
-                <li><a href=""><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
-            </ul>
-        </div>
-    </nav>
+    <c:import url="header.jsp"/>
 
     <c:set var="customer" value="No member"/>
     <div class="container-fluid">

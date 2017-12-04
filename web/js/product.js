@@ -1,0 +1,3 @@
+$("#product-submit").click(function () {
+
+});

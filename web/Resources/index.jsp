@@ -12,10 +12,10 @@
     <title>Bajuku POS-online POS system</title>
       <link rel="stylesheet" type="text/css" href="../css/bootstrap-3.3.7/dist/css/bootstrap.min.css">
       <link rel="stylesheet" href="../css/index.css">
+      <script src="../js/jquery-3.2.1.js"></script>
       <script src="../css/bootstrap-3.3.7/dist/js/bootstrap.min.js"></script>
   </head>
   <body>
-    <c:set var="display" value="hidden"/>
     <div id="form-login" class="container">
         <h1>User Login</h1>
         <form class="form-signin" action="/login" method="post">
@@ -24,14 +24,10 @@
             <label for="password-input">Password</label>
             <input type="password" class="form-control" id="password-input" name="password">
 
-            <button class="btn btn-success btn-block">Login</button>
+            <button class="login-btn btn btn-success btn-block">Login</button>
         </form>
 
-        <c:if test="${not empty error}">
-            <c:set var="display" value="error"/>
-        </c:if>
-
-        <div class="alert alert-danger alert-dismissable ${display}">
+        <div class="alert alert-danger alert-dismissable ${(not empty error)?'display':'hidden'}">
             <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
             <c:out value="${error}"/>
         </div>

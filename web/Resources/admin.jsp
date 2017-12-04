@@ -11,46 +11,38 @@
 <html>
 <head>
     <link rel="stylesheet" href="../css/bootstrap-3.3.7/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/admin.css">
     <script src="../js/jquery-3.2.1.js"></script>
     <script src="../css/bootstrap-3.3.7/dist/js/bootstrap.min.js"></script>
+    <script src="../js/admin.js"></script>
     <title>Title</title>
 </head>
 <body>
-    <nav class="navbar">
-        <div class="container-fluid">
-            <div class="navbar-header">
-                <a class="navbar-brand" href="">Bajuku POS</a>
-            </div>
-            <ul class="nav navbar-nav navbar-right">
-                <li class="dropdown">
-                    <a class="dropdown-toggle" data-toggle="dropdown" href="">Hello, <c:out value="${user}"/></a>
-                    <ul class="dropdown-menu">
-                        <li><a href=""></a></li>
-                    </ul>
-                </li>
-                <li><a href=""><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
-            </ul>
-        </div>
-    </nav>
+    <c:import url="header.jsp"/>
 
-    <div class="container-fluid">
+    <div class="content container-fluid">
         <div class="row">
-            <div class="col-md-3">
-                <ul class="nav nav-stacked">
-                    <li class="active"><a href="">Ledger</a></li>
-                    <li><a href="#user-tab">User</a></li>
-                    <li><a href="#customer-tab">Customer</a></li>
-                    <li><a href="#product-tab">Product</a></li>
-                    <li><a href="#log-tab">Log-file</a></li>
+            <div class="sidebar col-md-3">
+                <ul class="nav nav-stacked nav-pills">
+                    <li class="active"><a data-toggle="pill" href="#ledger-tab"><span class="icon glyphicon glyphicon-book"></span> Ledger</a></li>
+                    <li><a data-toggle="pill" href="#user-tab"><span class="icon glyphicon glyphicon-user"></span> User</a></li>
+                    <li><a data-toggle="pill" href="#customer-tab"><span class="icon glyphicon glyphicon-user"></span> Customer</a></li>
+                    <li><a data-toggle="pill" href="#product-tab"><span class="icon glyphicon glyphicon-gift"></span> Product</a></li>
+                    <li><a data-toggle="pill" href="#log-tab"><span class="icon glyphicon glyphicon-th-list"></span> Log-file</a></li>
                 </ul>
             </div>
             <div class="tab-content col-md-9">
-                <div id="user-tab"></div>
-                <div id="customer-tab"></div>
+                <div id="ledger-tab" class="tab-pane fade in active"></div>
+                <div id="user-tab" class="tab-pane">
+                    <c:import url="user.jsp"/>
+                </div>
+                <div id="customer-tab" class="tab-pane"></div>
                 <div id="product-tab" class="tab-pane">
                     <c:import url="product.jsp"/>
                 </div>
-                <div id="log-tab"></div>
+                <div id="log-tab" class="tab-pane">
+                    <c:import url="logfile.jsp"/>
+                </div>
              </div>
         </div>
     </div>
@@ -58,6 +50,12 @@
     <footer class="container-fluid text-center">
         <span>Footer</span>
     </footer>
+
+    <script>
+        $("li").click(function () {
+            console.log($(this)[0].firstChild.hash);
+        });
+    </script>
 
 </body>
 </html>

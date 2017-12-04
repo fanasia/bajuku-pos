@@ -1,0 +1,52 @@
+body{
+    overflow-x: hidden;
+}
+::-webkit-scrollbar{
+    width: 0;
+    background: transparent;
+}
+.navbar{
+    margin-bottom: 0;
+}
+.sidebar{
+    padding: 0;
+    height: 100%;
+    background: #02495D;
+}
+.icon{
+    margin-right: 10px;
+}
+.nav>li>a{
+    padding-left: 25px;
+}
+a{
+    color: #03A3BB;
+}
+.nav-pills>li>a{
+    border-radius: 0;
+}
+.search-btn>i{
+    padding: 3px;
+}
+.content{
+    padding: 0 10px;
+}
+.inner-content{
+    padding: 20px;
+}
+.tab-content{
+    background-color: #eaede2;
+}
+.display-tab{
+    padding: 5px 10px;
+    border: 1px solid #ddd;
+    background-color: #FFFFFF;
+}
+
+/*table-head*/
+table{
+    font-size: 12px;
+}
+.head{
+    margin-bottom: 0;
+}
