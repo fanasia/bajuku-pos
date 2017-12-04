@@ -9,7 +9,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class ProductRepository {
-    private Connection conn= Dbconnection.createConnection();
+    private Connection conn= null;
     private PreparedStatement stmt=null;
     private String sql=null;
 
@@ -32,8 +32,9 @@ public class ProductRepository {
     }
 
     public ArrayList<ProductModel> getAllProduct() throws SQLException{
-        ArrayList<ProductModel> productList;
-        sql="SELECT * FROM product_tb";
+        conn= Dbconnection.createConnection();
+        ArrayList<ProductModel> productList= null;
+        sql="SELECT * FROM product_tb LIMIT 10";
 
         stmt= conn.prepareStatement(sql);
         ResultSet rs= stmt.executeQuery();

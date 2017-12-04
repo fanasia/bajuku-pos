@@ -11,7 +11,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class CategoryRepository {
-    private Connection conn= Dbconnection.createConnection();
+    private Connection conn= null;
     private PreparedStatement stmt=null;
     private String sql=null;
 
@@ -30,8 +30,9 @@ public class CategoryRepository {
     }
 
     public ArrayList<CategoryModel> getAllCategories() throws SQLException{
-        ArrayList<CategoryModel> categoryList;
-        sql= "SELECT * FROM categories_tb";
+        conn= Dbconnection.createConnection();
+        ArrayList<CategoryModel> categoryList=null;
+        sql= "SELECT * FROM categories_tb LIMIT 10";
 
         stmt= conn.prepareStatement(sql);
         ResultSet rs= stmt.executeQuery();
@@ -40,9 +41,30 @@ public class CategoryRepository {
         return categoryList;
     }
 
-    public boolean insertCategory(){
+    private boolean executeStatement() throws SQLException{
+        if(!stmt.execute()){
+            conn.commit();
+            stmt.close();
+            conn.close();
+            return true;
+        }
+        else{
+            conn.rollback();
+            stmt.close();
+            conn.close();
+            return false;
+        }
+    }
 
-        return true;
+    public boolean insertCategory(CategoryModel model) throws SQLException{
+        conn= Dbconnection.createConnection();
+        conn.setAutoCommit(false);
+        sql= "INSERT INTO categories_tb(category_fullname) VALUES (?)";
+
+        stmt= conn.prepareStatement(sql);
+        stmt.setString(1, model.getFullname());
+
+        return executeStatement();
     }
 
     public boolean updateCategory(){

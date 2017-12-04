@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.SQLException;
 
-@WebServlet("/product/*")
+@WebServlet("/api/product/*")
 public class ProductService extends HttpServlet{
     private ObjectMapper mapper= new ObjectMapper();
     private ProductRepository repository= new ProductRepository();
@@ -21,6 +21,7 @@ public class ProductService extends HttpServlet{
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("application/json");
         resp.setCharacterEncoding("UTF-8");
+
         try {
             String jsonString= mapper.writeValueAsString(repository.getAllProduct());
             resp.getWriter().write(jsonString);

@@ -7,9 +7,9 @@ import java.sql.*;
 import java.util.ArrayList;
 
 public class UserRepository {
-    private Connection conn= Dbconnection.createConnection();
+    private Connection conn= null;
     private PreparedStatement stmt=null;
-    private PreparedStatement log=null;
+    private Statement log=null;
     private String sql=null;
 
     private ArrayList<UserModel> getObject(ResultSet rs) throws SQLException{
@@ -21,6 +21,7 @@ public class UserRepository {
             model.setUsername(rs.getString("username"));
             model.setFullname(rs.getString("user_fullname"));
             model.setPassword(rs.getString("password"));
+            model.setLog_time(rs.getTimestamp("log_time"));
             model.setUser_role(rs.getString("user_role"));
             models.add(model);
         }
@@ -29,8 +30,8 @@ public class UserRepository {
 
     @Nullable
     public UserModel authenticateUser(String user, String password) throws SQLException{
+        conn=Dbconnection.createConnection();
         UserModel model=new UserModel();
-        conn= Dbconnection.createConnection();
         sql= "SELECT * FROM user_tb WHERE username = ? AND password = md5(?)";
 
         stmt= conn.prepareStatement(sql);
@@ -47,12 +48,13 @@ public class UserRepository {
             model.setLog_time(new Timestamp(System.currentTimeMillis()));
         }
 
-        if(model!=null) {
-            String desc = model.getFullname() + " " + model.getUser_role();
-            String batch = "INSERT INTO log_tb VALUES (" + model.getId() + ", 'login', CURRENT_TIMESTAMP , '" + desc + "')";
-            log = conn.prepareStatement(batch);
-            log.execute();
-            log.close();
+        if(model.getId()!=0) {
+            log= conn.createStatement();
+            String batch = "INSERT INTO log_tb VALUES (" + model.getId() + ", 'login', CURRENT_TIMESTAMP , '" + model.getFullname() + " " + model.getUser_role() + "')";
+            log.addBatch(batch);
+            String update = "UPDATE user_tb SET log_time= CURRENT_TIMESTAMP WHERE id="+model.getId();
+            log.addBatch(update);
+            log.executeBatch();
         }
 
         rs.close();
@@ -62,9 +64,25 @@ public class UserRepository {
         return model;
     }
 
+    public int getCountUser() throws SQLException{
+        int count=0;
+        conn=Dbconnection.createConnection();
+        String sql= "SELECT count(id) as counter FROM user_tb";
+        stmt= conn.prepareStatement(sql);
+        ResultSet rs= stmt.executeQuery();
+
+        if(rs.next()){
+            count=rs.getInt("counter");
+        }
+        stmt.close();
+        conn.close();
+        return count;
+    }
+
     public ArrayList<UserModel> getAllUser() throws SQLException{
+        conn=Dbconnection.createConnection();
         ArrayList<UserModel> userList;
-        sql="SELECT * FROM user_tb";
+        sql="SELECT * FROM user_tb LIMIT 5";
 
         stmt= conn.prepareStatement(sql);
         ResultSet rs=stmt.executeQuery();
@@ -92,6 +110,7 @@ public class UserRepository {
     }
 
     public boolean insertUser(UserModel model) throws SQLException{
+        conn= Dbconnection.createConnection();
         conn.setAutoCommit(false);
         sql="INSERT INTO user_tb (username, user_fullname, password, log_time, user_role) " +
                 "VALUES (?, ?, md5(?), CURRENT_TIMESTAMP , ?)";
