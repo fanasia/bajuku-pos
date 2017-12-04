@@ -11,20 +11,21 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.UUID;
 
 @WebServlet("/login")
 public class LoginController extends HttpServlet {
     private UserRepository userRepository=new UserRepository();
-    private UserModel model=new UserModel();
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         HttpSession session= req.getSession();
+        UserModel model;
 
         //clear if session is already created
         if(session!=null){
             session.removeAttribute("user");
-            session.removeAttribute("username");
+            session.removeAttribute("id");
             session.removeAttribute("role");
         }
 
@@ -40,12 +41,14 @@ public class LoginController extends HttpServlet {
             }
             else {
                 session.setAttribute("user", model.getFullname());
-                session.setAttribute("username", model.getUsername());
+                session.setAttribute("id", model.getId());
                 session.setAttribute("role", model.getUser_role());
+                session.setAttribute("csrftoken", UUID.randomUUID());
+
                 if(model.getUser_role().equals("admin"))
-                    resp.sendRedirect("admin.jsp");
+                    resp.sendRedirect("/admin.jsp");
                 else
-                    resp.sendRedirect("cashier.jsp");
+                    resp.sendRedirect("/cashier.jsp");
             }
 
         } catch (SQLException e) {
