@@ -9,6 +9,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
@@ -41,6 +42,19 @@ public class CategoryService extends HttpServlet {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
     }
+
+    @Override
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        PrintWriter out= resp.getWriter();
+        HttpSession session= req.getSession(false);
+        try {
+            out.print(repository.deleteCategory(
+                    Integer.parseInt(req.getParameter("id")),
+                    Integer.parseInt(session.getAttribute("id").toString())));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
 }
