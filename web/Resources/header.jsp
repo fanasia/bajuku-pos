@@ -7,6 +7,7 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <html>
 <head>
     <title>Title</title>
@@ -20,12 +21,14 @@
             </div>
             <ul class="nav navbar-nav navbar-right">
                 <li class="dropdown">
-                    <a class="dropdown-toggle" data-toggle="dropdown" href="">Hello, <c:out value="${user}"/></a>
-                    <c:if test="${role=='admin'}">
-                        <c:set var="link" value="admin.jsp"/>
-                    </c:if>
-                    <ul class="dropdown-menu" ${(role=='admin')?'display':'hidden'}>
-                        <li><a href="${link}"><span class="glyphicon glyphicon-usd"></span> Go to cashier</a></li>
+                    <a class="dropdown-toggle" data-toggle="${(role=='admin')?'dropdown':'hidden'}" href="#">Hello, <c:out value="${user}"/></a>
+                    <ul class="dropdown-menu">
+                        <c:if test="${fn:contains(pageContext.request.requestURI, '/cashier.jsp')}">
+                            <li><a href="<c:url value="${(role=='admin')?'admin.jsp':'#'}"/>">Go to admin</a></li>
+                        </c:if>
+                        <c:if test="${fn:contains(pageContext.request.requestURI, '/admin.jsp')}">
+                            <li><a href="<c:url value="${(role=='admin')?'cashier.jsp':'#'}"/>">Go to cashier</a></li>
+                        </c:if>
                     </ul>
                 </li>
                 <li><a href="/logout"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>

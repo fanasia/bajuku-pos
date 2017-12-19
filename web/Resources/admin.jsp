@@ -15,7 +15,7 @@
     <script src="../js/jquery-3.2.1.js"></script>
     <script src="../css/bootstrap-3.3.7/dist/js/bootstrap.min.js"></script>
     <script src="../js/admin.js"></script>
-    <title>Title</title>
+    <title>Bajuku-Admin</title>
 </head>
 <body>
     <c:import url="header.jsp"/>
@@ -23,7 +23,11 @@
     <div class="content container-fluid">
         <div class="row">
             <div class="sidebar col-md-3">
-                <ul class="nav nav-stacked nav-pills">
+                <ul class="nav nav-stacked nav-pills" id="admin-tab">
+                    <li id="profile-tab" class="navbar-header">
+                        <h3>Profile</h3>
+                        <span>ID ${id}: ${user}</span>
+                    </li>
                     <li class="active"><a data-toggle="pill" href="#ledger-tab"><span class="icon glyphicon glyphicon-book"></span> Ledger</a></li>
                     <li><a data-toggle="pill" href="#user-tab"><span class="icon glyphicon glyphicon-user"></span> User</a></li>
                     <li><a data-toggle="pill" href="#customer-tab"><span class="icon glyphicon glyphicon-user"></span> Customer</a></li>
@@ -32,16 +36,18 @@
                 </ul>
             </div>
             <div class="tab-content col-md-9">
-                <div id="ledger-tab" class="tab-pane fade in active"></div>
-                <div id="user-tab" class="tab-pane">
-                    <c:import url="user.jsp"/>
+                <div id="ledger-tab" class="tab-pane fade in active">
+                    <c:import url="manage/ledger.jsp"/>
                 </div>
-                <div id="customer-tab" class="tab-pane"></div>
-                <div id="product-tab" class="tab-pane">
-                    <c:import url="product.jsp"/>
+                <div id="user-tab" class="tab-pane fade">
+                    <c:import url="manage/user.jsp"/>
                 </div>
-                <div id="log-tab" class="tab-pane">
-                    <c:import url="logfile.jsp"/>
+                <div id="customer-tab" class="tab-pane fade"></div>
+                <div id="product-tab" class="tab-pane fade">
+                    <c:import url="manage/product.jsp"/>
+                </div>
+                <div id="log-tab" class="tab-pane fade">
+                    <c:import url="manage/logfile.jsp"/>
                 </div>
              </div>
         </div>
@@ -52,9 +58,58 @@
     </footer>
 
     <script>
-        $("li").click(function () {
-            console.log($(this)[0].firstChild.hash);
+        //refresh on selected tabs
+        if(window.location.hash!==null) {
+            $("a[href='"+window.location.hash+"']").tab("show");
+        }
+        $("#admin-tab>li").click(function () {
+            window.location.hash= $(this)[0].firstChild.hash;
         });
+
+        //edit-btn action
+        $("tbody").on("click", ".edit-btn", function () {
+            var tr= $(this).parent().parent();
+
+            tr.addClass("hidden");
+            var form= "<tr class='form-inline edit-form' data-id='"+tr.data('id')+"'>";
+            $.each(tr.children(), function (key, value) {
+                //checks className
+                var cls= value.className.split(' ');
+                if(cls[1]==='selection'){
+                    form+="<td id='edit-selection' class='"+cls[0]+"'></td>";
+                }
+                else if(cls[1]==='non-editable'){
+                    form+="<td class='"+cls+"'>"+value.innerHTML+"</td>";
+                }
+                else if(cls[1]==='action'){
+                    form+="<td class='"+cls[0]+"'>" +
+                        "<button class='btn confirm-edit'><i class='glyphicon glyphicon-ok'></i></button>" +
+                        "<button class='btn cancel-edit'><i class='glyphicon glyphicon-remove'></i></button>" +
+                        "</td>";
+                }
+                else
+                    form+="<td class='"+cls+"'><input value='"+value.innerHTML+"'></td>";
+
+            });
+            form+="</tr>";
+            tr.after(form);
+        });
+
+        //remove edit form
+        $("tbody").on("click", ".cancel-edit", function () {
+            $(".hidden").removeClass("hidden");
+            $(this).parent().parent().remove();
+        });
+
+        //delete-btn action
+        $("tbody").on("click",".delete-btn", function () {
+            if(confirm("Are you sure? You can't undo this delete")){
+                var service= $(this).closest("table").attr("id").split('-');
+                var id= $(this).parent().parent().data("id");
+                deletedata("/api/"+service[0]+"/delete?id="+id, id);
+            }
+        });
+
     </script>
 
 </body>
