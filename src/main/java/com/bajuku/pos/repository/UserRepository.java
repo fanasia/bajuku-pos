@@ -2,6 +2,7 @@ package com.bajuku.pos.repository;
 
 import com.bajuku.pos.model.UserModel;
 import com.sun.istack.internal.Nullable;
+import com.sun.org.apache.regexp.internal.RE;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -64,11 +65,24 @@ public class UserRepository {
         return model;
     }
 
-    public int getCountUser() throws SQLException{
+    public int getCountUser(String role, String name) throws SQLException{
         int count=0;
         conn=Dbconnection.createConnection();
-        String sql= "SELECT count(id) as counter FROM user_tb";
-        stmt= conn.prepareStatement(sql);
+        if(role==null&&name==null) {
+            sql = "SELECT count(id) as counter FROM user_tb";
+            stmt= conn.prepareStatement(sql);
+        }
+        else if(name.equals("")){
+            sql = "SELECT count(id) as counter FROM user_tb WHERE user_role=?";
+            stmt= conn.prepareStatement(sql);
+            stmt.setString(1, role);
+        }
+        else {
+            sql = "SELECT count(id) as counter FROM user_tb WHERE user_role=? AND lower(user_fullname) LIKE '%'||?||'%'";
+            stmt= conn.prepareStatement(sql);
+            stmt.setString(1, role);
+            stmt.setString(2, name);
+        }
         ResultSet rs= stmt.executeQuery();
 
         if(rs.next()){
@@ -95,7 +109,7 @@ public class UserRepository {
     }
 
     private boolean executeStatement() throws SQLException{
-        if(stmt.execute()){
+        if(!stmt.execute()){
             conn.commit();
             stmt.close();
             conn.close();
@@ -137,7 +151,6 @@ public class UserRepository {
         conn.setAutoCommit(false);
         sql="UPDATE user_tb " +
                 "SET username= ?," +
-                "password= ?," +
                 "log_time= CURRENT_TIMESTAMP ," +
                 "user_fullname= ?," +
                 "user_role= ?" +
@@ -145,11 +158,31 @@ public class UserRepository {
 
         stmt=conn.prepareStatement(sql);
         stmt.setString(1, model.getUsername());
-        stmt.setString(2, model.getPassword());
-        stmt.setString(3, model.getFullname());
-        stmt.setString(4, model.getUser_role());
-        stmt.setInt(5, model.getId());
+         stmt.setString(2, model.getFullname());
+        stmt.setString(3, model.getUser_role());
+        stmt.setInt(4, model.getId());
         return executeStatement();
     }
 
+    public ArrayList<UserModel> getSearchUser(String role, String name, int page) throws SQLException{
+        ArrayList<UserModel> userList= null;
+        conn= Dbconnection.createConnection();
+        if(name.equals("")){
+            sql="SELECT * FROM user_tb WHERE user_role=? LIMIT 10 OFFSET ?*10";
+            stmt= conn.prepareStatement(sql);
+            stmt.setString(1, role);
+            stmt.setInt(2,page);
+        }
+        else {
+            sql = "SELECT * FROM user_tb WHERE user_role=? AND lower(user_fullname) LIKE ? LIMIT 10 OFFSET ?*10";
+            stmt= conn.prepareStatement(sql);
+            stmt.setString(1, role);
+            stmt.setString(2, '%'+name+'%');
+            stmt.setInt(3,page);
+        }
+
+        ResultSet rs= stmt.executeQuery();
+        userList= getObject(rs);
+        return userList;
+    }
 }
