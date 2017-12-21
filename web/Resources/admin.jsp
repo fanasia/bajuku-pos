@@ -42,7 +42,9 @@
                 <div id="user-tab" class="tab-pane fade">
                     <c:import url="manage/user.jsp"/>
                 </div>
-                <div id="customer-tab" class="tab-pane fade"></div>
+                <div id="customer-tab" class="tab-pane fade">
+                    <c:import url="manage/customer.jsp"/>
+                </div>
                 <div id="product-tab" class="tab-pane fade">
                     <c:import url="manage/product.jsp"/>
                 </div>
@@ -54,7 +56,7 @@
     </div>
 
     <footer class="container-fluid text-center">
-        <span>Footer</span>
+        <span>Created by Joshua Ivan Andjaya & Fayya Nadhira Anyatasia</span>
     </footer>
 
     <script>
