@@ -109,13 +109,13 @@ public class UserRepository {
     }
 
     private boolean executeStatement() throws SQLException{
-        if(!stmt.execute()){
+        if(!stmt.execute()) {
             conn.commit();
             stmt.close();
             conn.close();
             return true;
         }
-        else{
+        else {
             conn.rollback();
             stmt.close();
             conn.close();
@@ -158,7 +158,7 @@ public class UserRepository {
 
         stmt=conn.prepareStatement(sql);
         stmt.setString(1, model.getUsername());
-         stmt.setString(2, model.getFullname());
+        stmt.setString(2, model.getFullname());
         stmt.setString(3, model.getUser_role());
         stmt.setInt(4, model.getId());
         return executeStatement();

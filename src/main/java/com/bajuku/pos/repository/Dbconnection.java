@@ -8,7 +8,7 @@ public class Dbconnection {
     private static Connection conn=null;
     private static final String url="jdbc:postgresql://localhost:5432/bajuku_pos_db";
     private static final String USER="postgres";
-    private static final String PASS="23239797";
+    private static final String PASS="2017igi";
 
     public static Connection createConnection(){
         try {

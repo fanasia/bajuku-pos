@@ -256,7 +256,7 @@ var deletedata= function (url, id){
 var updatedata= function (url, object) {
     console.log("update data "+ object);
     $.ajax({
-        type:"PUT",
+        type:"POST",
         url: url,
         dataType: "json",
         data: {data: object, csrftoken: $(".csrftoken").val()},

@@ -1,7 +1,6 @@
 package com.bajuku.pos.model;
 
 import java.sql.Timestamp;
-import java.util.Date;
 
 public class UserModel {
     private int id;
