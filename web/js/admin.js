@@ -1,8 +1,9 @@
 var getSearch= function (url, page) {
     var str= url.split("/");
+
     $.ajax({
         type: "GET",
-        url: url+"&page="+page,
+        url: url,
         dataType: "JSON",
         success: function (data) {
             console.log(data);
@@ -74,7 +75,8 @@ var getSearch= function (url, page) {
                 }
             }
             else{
-                $("#log-body").children("tbody").append(
+                $("#"+str[2]+"-body").children("tbody").empty().
+                append(
                     "<tr>" +
                     "<td colspan='5'>No data found</td>" +
                     "</tr>"
@@ -84,9 +86,31 @@ var getSearch= function (url, page) {
                 ((10*page)+1)+"-"+
                 ((page+1)*10)+" of "+
                 data.count);
+
+            var prev = page - 1 <= 0 ? 0 : page - 1;
+            var next = page + 1 > Math.ceil(data.count / 10) ?  page : page + 1;
+
+            url= url.substr(0, url.indexOf("page"));
+            console.log(url);
+
+            $("#"+str[2]+"-previous").children("a").attr('href',url+'page='+prev);
+            $("#"+str[2]+"-next").children("a").attr('href',url+'page='+next);
         },
         error: function (status) {
-            console.log(status);
+            console.log(status.responseText);
+        }
+    });
+};
+
+var changePassword= function (url) {
+    $.ajax({
+        type: 'POST',
+        url: url,
+        success: function () {
+
+        },
+        error: function () {
+
         }
     });
 };
@@ -204,7 +228,9 @@ var insertdata= function (url, object) {
         data: {data: object, csrftoken: $(".csrftoken").val()},
         success: function (status) {
             console.log(status);
-            //append new tr
+            //reload table
+            $("#"+url.split('/')[2]+"-body").children("tbody").empty();
+            getdata("/api/"+url.split('/')[2]+"/getall",0);
         },
         error: function (status) {
             console.log(status);
@@ -213,14 +239,16 @@ var insertdata= function (url, object) {
 
 } ;
 
-var deletedata= function (url, id){
+var deletedata= function (url){
     $.ajax({
         type: "DELETE",
         url: url,
         dataType: "json",
         success: function (status) {
             console.log(status);
-            //remove deleted tr
+            //reload table
+            $("#"+url.split('/')[2]+"-body").children("tbody").empty();
+            getdata("/api/"+url.split('/')[2]+"/getall",0);
         },
         error: function (status) {
             console.log(status);

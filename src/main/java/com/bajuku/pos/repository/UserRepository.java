@@ -139,6 +139,7 @@ public class UserRepository {
     }
 
     public boolean deleteUser(int id) throws SQLException{
+        conn= Dbconnection.createConnection();
         conn.setAutoCommit(false);
         sql="DELETE  FROM user_tb WHERE id= ?";
 

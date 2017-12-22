@@ -2,13 +2,16 @@ package com.bajuku.pos.service;
 
 import com.bajuku.pos.model.UserModel;
 import com.bajuku.pos.repository.UserRepository;
+import org.codehaus.jackson.impl.DefaultPrettyPrinter;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.ObjectWriter;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
@@ -38,7 +41,7 @@ public class UserService extends HttpServlet{
         }
         else {
             try {
-                String jsonString = mapper.writeValueAsString(repository.getAllUser());
+                String jsonString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(repository.getAllUser());
                 resp.getWriter().write(jsonString);
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -59,13 +62,23 @@ public class UserService extends HttpServlet{
 
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        BufferedReader reader= req.getReader();
+        String json= reader.readLine();
 
+        UserModel model= mapper.readValue(json, UserModel.class);
+        PrintWriter out= resp.getWriter();
+        try {
+            out.print(repository.updateUser(model));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        PrintWriter out= resp.getWriter();
         try {
-            repository.deleteUser(Integer.parseInt(req.getParameter("id")));
+            out.print(repository.deleteUser(Integer.parseInt(req.getParameter("id"))));
         } catch (SQLException e) {
             e.printStackTrace();
         }
