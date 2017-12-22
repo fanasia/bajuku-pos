@@ -53,9 +53,9 @@
 
             <div class="col-md-12">
                 <ul class="pager">
-                    <li class="previous"><a href="">Previous</a></li>
-                    <li class="count"></li>
-                    <li class="next"><a href="">Next</a></li>
+                    <li id="user-previous" class="previous"><a href="">Previous</a></li>
+                    <li id="user-count" class="count"></li>
+                    <li id="user-next" class="next"><a href="">Next</a></li>
                 </ul>
             </div>
         </div>
@@ -126,7 +126,7 @@
 
         $("#search-user").on('change keyup', function () {
             console.log($(this).serialize());
-            setTimeout(getSearch('/api/user/search?'+$(this).serialize(),0), 5000);
+            getSearch('/api/user/search?'+$(this).serialize()+"&page=0",0);
         });
     </script>
 

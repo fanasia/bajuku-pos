@@ -44,22 +44,25 @@
 
             <div class="col-md-12">
                 <ul class="pager">
-                    <li class="previous"><a href="">Previous</a></li>
+                    <li id="log-previous" class="previous"><a href="">Previous</a></li>
                     <li id="log-count" class="count"></li>
-                    <li class="next"><a href="">Next</a></li>
+                    <li id="log-next" class="next"><a href="">Next</a></li>
                 </ul>
             </div>
         </div>
     </div>
 
     <script>
+        var page;
         setTimeout(getdata('/api/log/getall',0), 5000);
         setTimeout(getcategories, 5000);
 
         $("#search-log").change(function () {
-           console.log($("#search-log").serialize());
-           getSearch('/api/log/search?'+$(this).serialize(),0);
+            console.log($("#search-log").serialize());
+            getSearch('/api/log/search?'+$(this).serialize()+"&page=0",0);
         });
+
+
 
     </script>
 </body>

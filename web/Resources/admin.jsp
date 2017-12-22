@@ -108,7 +108,7 @@
             if(confirm("Are you sure? You can't undo this delete")){
                 var service= $(this).closest("table").attr("id").split('-');
                 var id= $(this).parent().parent().data("id");
-                deletedata("/api/"+service[0]+"/delete?id="+id, id);
+                deletedata("/api/"+service[0]+"/delete?id="+id);
             }
         });
 

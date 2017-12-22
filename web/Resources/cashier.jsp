@@ -65,6 +65,20 @@
                     </div>
                 </div>
                 <div id="cart-info" class="well col-md-12">
+                    <table class="table table-bordered">
+                        <tr>
+                            <td>Subtotal</td>
+                            <td id="subtotal-input"></td>
+                        </tr>
+                        <tr>
+                            <td>Discount</td>
+                            <td id="discount-input"></td>
+                        </tr>
+                        <tr>
+                            <td>Total</td>
+                            <td id="total-input"></td>
+                        </tr>
+                    </table>
                 </div>
                 <div class="col-md-12">
                     <button class="reset-btn btn btn-block btn-warning">Reset</button>
@@ -126,7 +140,6 @@
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -178,6 +191,7 @@
 
     <script>
         var cart= initiateCart();
+        calculateCart(0);
         console.log(cart);
 
         setTimeout(getcontent(0), 5000);
@@ -198,25 +212,25 @@
             }
             if(idx===-1||cart===null){
                 var qty= prompt("Insert products quantity: ");
-                if(!isNaN(qty)&&qty>0) {
-                    $("#cart-body").children("tbody").append(
+                if(!isNaN(qty)&&parseInt(qty)>0) {
+                    $("#cart-body table").children("tbody").append(
                         "<tr data-id='" + $(this).data('id') + "'>" +
-                        "<td class='col-sm-3'>" + $(this).children("a").html() + "</td>" +
-                        "<td class='col-sm-3'><input class='form-control' type='number' value='"+parseInt(qty)+"'></td>" +
-                        "<td class='col-sm-4'>" +
-                        "<div class='input-group'>" +
-                        "<span class='input-group-addon'>IDR</span>\n" +
-                        "<input class='form-control' type='number' value='" + parseInt($(this).children(".price").html()) + "' disabled>\n" +
-                        "</div>" +
-                        "</td>" +
-                        "<td class='action-btn col-sm-2'><button class='remove-btn btn btn-danger'><span class='glyphicon glyphicon-trash'></span></button></td>" +
+                            "<td class='col-sm-3'>" + $(this).children("a").html() + "</td>" +
+                            "<td class='col-sm-3'><input class='form-control' type='number' value='"+parseInt(qty)+"'></td>" +
+                            "<td class='col-sm-4'>" +
+                            "<div class='input-group'>" +
+                                "<span class='input-group-addon'>IDR</span>\n" +
+                                "<input class='form-control' type='number' value='" + parseInt($(this).children(".price").html()) + "' disabled>\n" +
+                            "</div>" +
+                            "</td>" +
+                            "<td class='action-btn col-sm-2'><button class='remove-btn btn btn-danger'><span class='glyphicon glyphicon-trash'></span></button></td>" +
                         "</tr>"
                     );
                     cart.push($(this).data('id').toString());
                     var newitem = '#'+$(this).data('id');
                     localStorage.setItem("cart", localStorage.getItem("cart")+newitem);
                 }
-                else {
+                else if(isNaN(qty)){
                     alert("Input a number");
                 }
             }
