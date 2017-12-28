@@ -94,21 +94,21 @@
     <script>
         setTimeout(getdata("/api/customer/getall",0), 5000);
 
-        $("#custome-submit").click(function () {
+        $("#customer-submit").click(function () {
             var data={};
             var url="/api/customer/insert";
             data.id=null;
             data.fullname= $("#input-customer-name").val();
             data.email= $("#input-email").val();
             data.phone= $("#input-phone").val();
-            data.point= 0;
+            data.points= 0;
             console.log(data);
             insertdata(url, JSON.stringify(data));
         });
 
         $("#search-customer").on('change keyup', function () {
             console.log($(this).serialize());
-            setTimeout(getSearch('/api/customer/search?'+$(this).serialize(),0), 5000);
+            setTimeout(getSearch('/api/customer/search?'+$(this).serialize()+"&page=0",0), 5000);
         });
     </script>
 </body>

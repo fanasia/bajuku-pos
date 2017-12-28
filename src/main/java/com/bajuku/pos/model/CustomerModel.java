@@ -7,6 +7,16 @@ public class CustomerModel {
     private String fullname;
     private int points;
 
+    public CustomerModel(){}
+
+    public CustomerModel(int id, String email, String phone, String fullname, int points){
+        this.id=id;
+        this.email=email;
+        this.phone=phone;
+        this.fullname=fullname;
+        this.points=points;
+    }
+
     public int getId() {
         return id;
     }

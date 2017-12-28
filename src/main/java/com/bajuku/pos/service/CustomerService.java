@@ -28,7 +28,7 @@ public class CustomerService extends HttpServlet{
                 String array= mapper.writeValueAsString(repository.getSearchCustomer(
                         req.getParameter("search-customer").toLowerCase(),
                         Integer.parseInt(req.getParameter("page"))));
-                int count= repository.getCountCustomer(req.getParameter("search-user"));
+                int count= repository.getCountCustomer(req.getParameter("search-customer"));
 
                 resp.getWriter().write("{\"count\": "+count+", \"array\": "+array+"}");
 
@@ -48,6 +48,7 @@ public class CustomerService extends HttpServlet{
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        System.out.println(req.getParameter("data"));
         CustomerModel model= mapper.readValue(req.getParameter("data"),CustomerModel.class);
         PrintWriter out= resp.getWriter();
         try {

@@ -11,16 +11,15 @@ public class CustomerRepository {
     private String sql=null;
 
     private ArrayList<CustomerModel> getObject(ResultSet rs) throws SQLException{
-        CustomerModel model=null;
+        CustomerModel model;
         ArrayList<CustomerModel> models= new ArrayList<CustomerModel>();
 
         while (rs.next()){
-            model= new CustomerModel();
-            model.setId(rs.getInt("id"));
-            model.setEmail(rs.getString("customer_email"));
-            model.setPhone(rs.getString("customer_phone"));
-            model.setFullname(rs.getString("customer_fullname"));
-            model.setPoints(rs.getInt("points"));
+            model= new CustomerModel(rs.getInt("id"),
+                    rs.getString("customer_email"),
+                    rs.getString("customer_phone"),
+                    rs.getString("customer_fullname"),
+                    rs.getInt("points"));
             models.add(model);
         }
         return models;
@@ -49,7 +48,7 @@ public class CustomerRepository {
             stmt= conn.prepareStatement(sql);
         }
         else {
-            sql = "SELECT count(id) as counter FROM customer_tb WHERE lower(customer_fullname) LIKE '%'||?||'%'";
+            sql = "SELECT count(id) as counter FROM customer_tb WHERE lower(customer_fullname) LIKE '%'|| ? ||'%'";
             stmt= conn.prepareStatement(sql);
             stmt.setString(1, name);
         }
@@ -66,7 +65,7 @@ public class CustomerRepository {
     public ArrayList<CustomerModel> getAllCustomer() throws SQLException{
         conn = Dbconnection.createConnection();
         ArrayList<CustomerModel> customerList;
-        sql="SELECT * FROM customer_tb";
+        sql="SELECT * FROM customer_tb LIMIT 10";
 
         stmt= conn.prepareStatement(sql);
         ResultSet rs= stmt.executeQuery();
@@ -79,6 +78,7 @@ public class CustomerRepository {
     }
 
     public boolean insertCustomer(CustomerModel model) throws SQLException{
+        System.out.println(model.getFullname());
         conn = Dbconnection.createConnection();
         conn.setAutoCommit(false);
         sql="INSERT INTO customer_tb (customer_email, customer_phone, customer_fullname, points) " +
@@ -122,20 +122,15 @@ public class CustomerRepository {
         return executeStatement();
     }
 
-    public ArrayList<CustomerModel> getSearchCustomer(String name, int page) throws SQLException{
-        ArrayList<CustomerModel> customerList= null;
+    public ArrayList<CustomerModel> getSearchCustomer(String query, int page) throws SQLException{
+        ArrayList<CustomerModel> customerList;
         conn= Dbconnection.createConnection();
-        if(name.equals("")){
-            sql="SELECT * FROM customer_tb LIMIT 10 OFFSET ?*10";
-            stmt= conn.prepareStatement(sql);
-            stmt.setInt(1,page);
-        }
-        else {
-            sql = "SELECT * FROM customer_tb WHERE lower(customer_fullname) LIKE ? LIMIT 10 OFFSET ?*10";
-            stmt= conn.prepareStatement(sql);
-            stmt.setString(1, '%'+name+'%');
-            stmt.setInt(2,page);
-        }
+        sql = "SELECT * FROM customer_tb WHERE lower(customer_fullname) LIKE '%'|| ? || '%' OR customer_phone LIKE '%'|| ? || '%' LIMIT 10 OFFSET ? *10";
+
+        stmt= conn.prepareStatement(sql);
+        stmt.setString(1, query);
+        stmt.setString(2, query);
+        stmt.setInt(3,page);
 
         ResultSet rs= stmt.executeQuery();
         customerList= getObject(rs);
