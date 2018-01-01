@@ -47,9 +47,9 @@
 
             <div class="col-md-12">
                 <ul class="pager">
-                    <li class="previous"><a href="">Previous</a></li>
-                    <li class="count"></li>
-                    <li class="next"><a href="">Next</a></li>
+                    <li id="customer-previous" class="previous"><a href="">Previous</a></li>
+                    <li id="customer-count" class="count"></li>
+                    <li id="customer-next" class="next"><a href="">Next</a></li>
                 </ul>
             </div>
         </div>
@@ -92,7 +92,7 @@
     </div>
 
     <script>
-        setTimeout(getdata("/api/customer/getall",0), 5000);
+        setTimeout(getdata("/api/customer/getall?page=0",0,10), 5000);
 
         $("#customer-submit").click(function () {
             var data={};
@@ -108,8 +108,9 @@
 
         $("#search-customer").on('change keyup', function () {
             console.log($(this).serialize());
-            setTimeout(getSearch('/api/customer/search?'+$(this).serialize()+"&page=0",0), 5000);
+            getdata('/api/customer/search?'+$(this).serialize()+"&page=0",0,10);
         });
+
     </script>
 </body>
 </html>

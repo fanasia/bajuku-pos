@@ -33,14 +33,14 @@
                             </div>
                         </form>
                     </li>
-                    <li><a href="#" data-toggle="modal" data-target="#add-user"><span class="glyphicon glyphicon-plus"></span> Add user</a></li>
+                    <li><a href="#" data-toggle="modal" data-target="#add-user"><span class="glyphicon glyphicon-plus"></span> Add User</a></li>
                 </ul>
             </div>
 
             <table id="user-body" class="table head table-striped table-responsive">
                 <thead>
                 <tr>
-                    <th class="col-sm-3">Fullname</th>
+                    <th class="col-sm-3">Full Name</th>
                     <th class="col-sm-2">Username</th>
                     <th class="col-sm-2">Last login</th>
                     <th class="col-sm-2">Role</th>
@@ -108,16 +108,49 @@
         </div>
     </div>
 
+    <div id="change-password" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h3 class="modal-title">Change password</h3>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <div class="form-center form-horizontal">
+                            <div class="form-group">
+                                <label class="control-label col-sm-offset-2 col-sm-2" for="input-user-name">New Password:</label>
+                                <div class="col-sm-6">
+                                    <input class="form-control" id="input-change" type="text" placeholder="Password">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-offset-2 col-sm-2" for="input-username">Confirm Password:</label>
+                                <div class="col-sm-6">
+                                    <input class="form-control" id="input-confirmation" type="text">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-success">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
     <script>
-        setTimeout(getdata("/api/user/getall",0), 5000);
+        setTimeout(getdata("/api/user/getall?page=0",0, 10), 5000);
 
         $("#user-submit").click(function () {
             var data={};
             var url="/api/user/insert";
             data.id=null;
+            data.fullname= $("#input-user-name").val();
             data.username= $("#input-username").val();
             data.password= $("#input-password").val();
-            data.fullname= $("#input-user-name").val();
             data.log_time=null;
             data.user_role= $("#input-role").val();
             console.log(data);
@@ -126,8 +159,9 @@
 
         $("#search-user").on('change keyup', function () {
             console.log($(this).serialize());
-            getSearch('/api/user/search?'+$(this).serialize()+"&page=0",0);
+            getdata('/api/user/search?'+$(this).serialize()+"&page=0",0,10);
         });
+
     </script>
 
 </body>

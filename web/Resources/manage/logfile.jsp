@@ -33,6 +33,7 @@
             <table id="log-body" class="table head table-striped table-responsive">
                 <thead>
                 <tr>
+                    <th class="col-sm-1">User</th>
                     <th class="col-sm-1">Action</th>
                     <th class="col-sm-1">Time</th>
                     <th class="col-sm-1">Description</th>
@@ -53,17 +54,12 @@
     </div>
 
     <script>
-        var page;
-        setTimeout(getdata('/api/log/getall',0), 5000);
-        setTimeout(getcategories, 5000);
+        setTimeout(getdata('/api/log/getall?page=0',0, 10), 5000);
 
         $("#search-log").change(function () {
             console.log($("#search-log").serialize());
-            getSearch('/api/log/search?'+$(this).serialize()+"&page=0",0);
+            getdata('/api/log/search?'+$(this).serialize()+"&page=0",0,10);
         });
-
-
-
     </script>
 </body>
 </html>

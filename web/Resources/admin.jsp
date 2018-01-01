@@ -22,8 +22,8 @@
 
     <div class="content container-fluid">
         <div class="row">
-            <div class="sidebar col-md-3">
-                <ul class="nav nav-stacked nav-pills" id="admin-tab">
+            <div id="admin-sidebar" class="sidebar col-md-3 col-xs-12">
+                <ul id="admin-tab" class="nav nav-stacked nav-pills" >
                     <li id="profile-tab" class="navbar-header">
                         <h3>Profile</h3>
                         <span>ID ${id}: ${user}</span>
@@ -35,7 +35,7 @@
                     <li><a data-toggle="pill" href="#log-tab"><span class="icon glyphicon glyphicon-th-list"></span> Log-file</a></li>
                 </ul>
             </div>
-            <div class="tab-content col-md-9">
+            <div class="tab-content col-md-9 col-xs-12">
                 <div id="ledger-tab" class="tab-pane fade in active">
                     <c:import url="manage/ledger.jsp"/>
                 </div>
@@ -70,15 +70,20 @@
 
         //edit-btn action
         $("tbody").on("click", ".edit-btn", function () {
-            var tr= $(this).parent().parent();
+            //remove previous edit form
+            $(".cancel-edit").click();
 
+            var tr= $(this).parent().parent();
             tr.addClass("hidden");
             var form= "<tr class='form-inline edit-form' data-id='"+tr.data('id')+"'>";
+            var role;
+
             $.each(tr.children(), function (key, value) {
                 //checks className
                 var cls= value.className.split(' ');
                 if(cls[1]==='selection'){
                     form+="<td id='edit-selection' class='"+cls[0]+"'></td>";
+                    role=value.innerHTML;
                 }
                 else if(cls[1]==='non-editable'){
                     form+="<td class='"+cls+"'>"+value.innerHTML+"</td>";
@@ -89,12 +94,18 @@
                         "<button class='btn cancel-edit'><i class='glyphicon glyphicon-remove'></i></button>" +
                         "</td>";
                 }
-                else
-                    form+="<td class='"+cls+"'><input value='"+value.innerHTML+"'></td>";
-
+                else if(cls[1]==='numeric'){
+                    form+="<td class='"+cls+"'><input type='number' value='"+value.innerHTML+"'></td>";
+                }
+                else {
+                    form += "<td class='" + cls + "'><input value='" + value.innerHTML + "'></td>";
+                }
             });
             form+="</tr>";
             tr.after(form);
+
+            //checks product or user
+            $("#edit-selection").html($("#select-role").clone().val(role));
         });
 
         //remove edit form
@@ -112,6 +123,53 @@
             }
         });
 
+        //confirm edit
+        $("tbody").on('click', '.confirm-edit', function () {
+            var data={};
+            var service= $(this).closest('table').attr('id').split('-');
+            var url;
+            var tr= $(this).parent().parent().find('input');
+
+            if(service[0]==='user'){
+                url="/api/user/update";
+                console.log(tr);
+
+                data.id= $(this).parent().parent().data('id');
+                data.fullname= tr.eq(0).val();
+                data.username= tr.eq(1).val();
+                data.password= null;
+                data.log_time= null;
+                data.user_role= tr.eq(2).val();
+
+                console.log(data);
+            }
+            else if(service[0]==='customer'){
+                url="/api/customer/update";
+
+                data.id= $(this).parent().parent().data('id');
+                data.fullname= tr.eq(0).val();
+                data.email= tr.eq(1).val();
+                data.phone= tr.eq(2).val();
+                data.points= tr.eq(3).val();
+
+                console.log(data);
+            }
+            else if(service[0]==='product'){
+
+            }
+            else if(service[0]==='category'){
+
+            }
+        });
+
+        //paging previous-next
+        $(".previous, .next").on('click', function (e) {
+           e.preventDefault();
+           var link= $(this).children('a').attr('href');
+           var limit=0;
+           (link.includes('/product')||link.includes('/categories'))? limit=7: limit=10;
+           getdata(link,link.substring(link.length, link.lastIndexOf('=')+1),limit);
+        });
     </script>
 
 </body>

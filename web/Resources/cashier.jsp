@@ -21,17 +21,21 @@
 
     <div class="container-fluid">
         <div class="row">
-            <div id="left-col" class="col-md-5 col-xs-7">
+            <div id="left-col" class="col-md-5 col-sm-5 col-xs-12">
                 <!-- Left -->
-                <div class="col-md-12 form-inline">
-                    <span class="symbol glyphicon glyphicon-user"></span>
-                    <div class="form-group has-feedback">
-                        <div>
-                            <input class="form-control" id="search-customer" name="search-customer" type="text">
-                            <span class="glyphicon glyphicon-search form-control-feedback"></span>
+                <div class="col-md-12 dropdown">
+                    <form id="search-customer" class="form-inline">
+                        <span class="symbol glyphicon glyphicon-user"></span>
+                        <div class="form-group has-feedback">
+                                <input class="form-control" name="search-customer" type="text">
+                                <span class="glyphicon glyphicon-search form-control-feedback"></span>
                         </div>
-                    </div>
+                        <ul id="customer-dropdown" class="list-group dropdown-menu">
+                            <%--template members--%>
+                        </ul>
+                    </form>
                 </div>
+
                 <div id="customer-info" class="col-md-12">
                     <h4>No member</h4>
                 </div>
@@ -48,56 +52,42 @@
                     </table>
                     <div id="cart-body">
                         <table class="table">
-                            <tbody>
-                            <tr>
-                                <td class="col-sm-3">PRODUCT1</td>
-                                <td class="col-sm-3"><input class="form-control" type="number"></td>
-                                <td class="col-sm-4">
-                                    <div class="input-group">
-                                        <span class="input-group-addon">IDR</span>
-                                        <input class="form-control" type="number" value="150000" disabled>
-                                    </div>
-                                </td>
-                                <td class="action-btn col-sm-2"><button class="remove-btn btn btn-danger"><span class="glyphicon glyphicon-trash"></span></button></td>
-                            </tr>
+                            <tbody id="cart-inner-body">
+                            <%--template items--%>
                             </tbody>
                         </table>
                     </div>
-                </div>
-                <div id="cart-info" class="well col-md-12">
-                    <table class="table table-bordered">
-                        <tr>
-                            <td>Subtotal</td>
-                            <td id="subtotal-input"></td>
-                        </tr>
-                        <tr>
-                            <td>Discount</td>
-                            <td id="discount-input"></td>
-                        </tr>
-                        <tr>
-                            <td>Total</td>
-                            <td id="total-input"></td>
-                        </tr>
-                    </table>
-                </div>
-                <div class="col-md-12">
-                    <button class="reset-btn btn btn-block btn-warning">Reset</button>
-                    <button class="btn btn-block btn-success" data-toggle="modal" data-target="#transaction-detail">Continue</button>
+                    <div id="cart-info" class="well col-md-12">
+                        <table class="table table-bordered">
+                            <tr>
+                                <td class="col-md-4">Subtotal</td>
+                                <td id="subtotal-input" data-value="0"></td>
+                            </tr>
+                            <tr>
+                                <td class="col-md-4">Discount</td>
+                                <td id="discount-input"></td>
+                            </tr>
+                            <tr>
+                                <td class="col-md-4">Total</td>
+                                <td id="total-input"></td>
+                            </tr>
+                        </table>
+                    </div>
                 </div>
             </div>
 
-            <div id="right-col" class="col-md-7 col-xs-7">
+            <div id="right-col" class="col-md-7 col-sm-7 col-xs-12">
                 <!-- Right -->
                 <div class="col-md-12 col-sm-12">
                     <ul class="nav">
                         <li class="nav navbar-left">
-                            <form class="form-inline" action="" method="get">
+                            <form id="search-product" class="form-inline" action="" method="get">
                                 <div class="input-group">
                                 <span class="input-group-addon">
-                                    <select name="" id="filter-categories">
+                                    <select id="filter-categories" name="select-categories">
                                     </select>
                                 </span>
-                                    <input id="search-product" name="search-product" class="form-control" type="text" placeholder="search-product">
+                                    <input name="search-product" class="form-control" type="text" placeholder="search-product">
                                     <div class="input-group-btn">
                                         <button class="search-btn btn btn-default">
                                             <i class="glyphicon glyphicon-search"></i>
@@ -113,19 +103,19 @@
                     </ul>
                 </div>
 
-                <div id="product-container" class="well col-md-12">
-                    <div class="product-info col-md-3 col-sm-4" data-id="0">
-                        <a href="">PRODUCT1</a><br>
-                        <span class="badge">5</span><br>
-                        <span class="price">1500000</span>
-                    </div>
+                <div id="product-container" class="well col-md-12 col-sm-12 col-xs-12">
+                    <%--template product--%>
                 </div>
                 <div class="col-md-12">
                     <ul class="pager">
-                        <li class="previous"><a href="">Previous</a></li>
-                        <li class="count"></li>
-                        <li class="next"><a href="">Next</a></li>
+                        <li id="cashier-previous" class="previous"><a href="">Previous</a></li>
+                        <li id="cashier-count" class="count"></li>
+                        <li id="cashier-next" class="next"><a href="">Next</a></li>
                     </ul>
+                </div>
+                <div class="col-md-12">
+                    <button class="reset-btn btn btn-block btn-warning">Reset</button>
+                    <button class="continue-btn btn btn-block btn-success" data-toggle="modal" data-target="#transaction-detail">Continue</button>
                 </div>
             </div>
         </div>
@@ -139,7 +129,25 @@
                     <h3 class="modal-title">Customer membership</h3>
                 </div>
                 <div class="modal-body">
-                    <div class="form-group">
+                    <div class="form-center form-horizontal">
+                        <div class="form-group">
+                            <label class="control-label col-sm-offset-2 col-sm-2" for="input-customer-name">Fullname:</label>
+                            <div class="col-sm-6">
+                                <input class="form-control" id="input-customer-name" type="text" placeholder="Fullname">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-offset-2 col-sm-2" for="input-email">Email:</label>
+                            <div class="col-sm-6">
+                                <input class="form-control" id="input-email" type="text">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-offset-2 col-sm-2" for="input-phone">Phone:</label>
+                            <div class="col-sm-6">
+                                <input class="form-control" id="input-phone" type="text">
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -156,94 +164,165 @@
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                     <h3 class="modal-title">Detail Transaction</h3>
                 </div>
-                <div id="transaction-table" class="modal-body">
-                    <table id="transaction-header" class="table">
-                        <thead>
-                            <tr>
-                                <th>Fullname</th>
-                                <th>Price</th>
-                                <th>Quantity</th>
-                                <th>Subtotal</th>
-                            </tr>
-                        </thead>
-                    </table>
-                    <table id="transaction-body" class="table table-bordered table-responsive">
-                        <tbody>
-                            <tr>
-                                <td>PRODUCT1</td>
-                                <td>1000000</td>
-                                <td>1</td>
-                                <td>1000000</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div class="modal-body">
+                    <div id="transaction-info" class="form-center form-horizontal">
+                        <div class="form-group">
+                            <label class="control-label col-md-2 col-md-offset-2">Total: </label>
+                            <div class="col-md-4">
+                                <span id="transaction-total"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-md-2 col-md-offset-2" for="payment-input">Payment: </label>
+                            <div class="col-md-4">
+                                <input id="payment-input" class="form-control" type="text" >
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-success">Confirm</button>
+                    <button id="transaction-submit" class="btn btn-success">Confirm</button>
                 </div>
             </div>
         </div>
     </div>
 
     <footer class="container-fluid text-center">
-        <span>Footer</span>
+        <span>&copy;2017 Bajuku-POS</span>
     </footer>
 
     <script>
         var cart= initiateCart();
+        var cartQty= initiateQuantity();
         calculateCart(0);
-        console.log(cart);
+        //remove null from array
+        cart.splice(0,1);
+        cartQty.splice(0,1);
 
-        setTimeout(getcontent(0), 5000);
-        setTimeout(getcategories, 1000);
+        setTimeout(getcontent('/api/product/getall?limit=12&page=0',0), 5000);
+        getcategories();
+        checkCart(cart, cartQty);
 
         $(".reset-btn").click(function () {
             if(confirm("Are you sure?")){
                 localStorage.clear();
+                calculateCart(0);
+                $("#cart-body").empty();
             }
         });
         
         $("#product-container").on('click', '.product-info', function () {
             var id= $(this).data('id');
-            var idx;
-            if(cart!==null){
-                idx= $.inArray(id.toString(), cart);
-                console.log(idx);
+            if($(this).children(".stock").html()==="Not in stock"){
+                alert("Product not in stock!");
+                return;
             }
-            if(idx===-1||cart===null){
-                var qty= prompt("Insert products quantity: ");
-                if(!isNaN(qty)&&parseInt(qty)>0) {
-                    $("#cart-body table").children("tbody").append(
-                        "<tr data-id='" + $(this).data('id') + "'>" +
+            else {
+                if (cart.indexOf(id.toString()) === -1 || cart === null) {
+                    var qty = prompt("Insert products quantity: ");
+
+                    if (qty.trim().length === 0 || qty.length === 0) {
+                        alert("Quantity can\'t be empty");
+                        return;
+                    }
+                    else if (isNaN(qty)) {
+                        alert("Input a number!");
+                    }
+                    else if (parseInt(qty) > parseInt($(this).children('.stock').html())) {
+                        alert("Quantity input can\'t exceed product in stock");
+                    }
+                    else {
+                        $("#cart-body table").children("tbody").append(
+                            "<tr data-id='" + $(this).data('id') + "'>" +
                             "<td class='col-sm-3'>" + $(this).children("a").html() + "</td>" +
-                            "<td class='col-sm-3'><input class='form-control' type='number' value='"+parseInt(qty)+"'></td>" +
+                            "<td class='col-sm-3'><input class='form-control' type='number' value='" + parseInt(qty) + "' max='" + $(this).children(".stock").html() + "'></td>" +
                             "<td class='col-sm-4'>" +
                             "<div class='input-group'>" +
-                                "<span class='input-group-addon'>IDR</span>\n" +
-                                "<input class='form-control' type='number' value='" + parseInt($(this).children(".price").html()) + "' disabled>\n" +
+                            "<span class='input-group-addon'>IDR</span>\n" +
+                            "<input class='form-control' type='number' value='" + parseInt($(this).children(".price").html()) + "' disabled>" +
                             "</div>" +
                             "</td>" +
                             "<td class='action-btn col-sm-2'><button class='remove-btn btn btn-danger'><span class='glyphicon glyphicon-trash'></span></button></td>" +
-                        "</tr>"
-                    );
-                    cart.push($(this).data('id').toString());
-                    var newitem = '#'+$(this).data('id');
-                    localStorage.setItem("cart", localStorage.getItem("cart")+newitem);
+                            "</tr>"
+                        );
+
+                        //update cart-id
+                        cart.push($(this).data('id').toString());
+                        var newitem = '#' + $(this).data('id');
+                        localStorage.setItem("cart", localStorage.getItem("cart") + newitem);
+
+                        //update cart-quantity
+                        cartQty.push(qty);
+                        var newQty = '#' + qty;
+                        localStorage.setItem("cartQty", localStorage.getItem("cartQty") + newQty);
+
+                        //update subtotal
+                        var price = parseFloat($(this).children('.price').html()) * parseInt(qty);
+                        calculateCart(price);
+                    }
                 }
-                else if(isNaN(qty)){
-                    alert("Input a number");
+                else {
+                    alert("Product already in the cart!");
                 }
-            }
-            else {
-                alert("Product already in the cart!");
             }
         });
 
-        $(document).on('click', '.remove-btn', function () {
-            if(confirm("Remove this product from cart?")){
+        $("#cart-inner-body").on('click', '.remove-btn', function () {
+            if(confirm('Remove this product from cart?')){
+                var id= $(this).parent().parent().data('id');
+                var decrease= $(this).parent().siblings().eq(1).children().eq(0).val();
+                var price= $(this).parent().siblings().eq(2).children().eq(0).children().eq(1).val();
+
                 $(this).parent().parent().remove();
+
+                //update localStorage
+                cart.splice(cart.indexOf(id),1);
+                cartQty.splice(cartQty.indexOf(id),1);
+                console.log(cart+" "+cartQty);
+
+                calculateCart(-(decrease*price));
             }
         });
+
+        $("input[name=search-customer]").keyup(function () {
+            if($(this).val().length>0){
+                console.log(($("#search-customer").serialize()));
+                getSearchMember("/api/customer/getSearch?"+$("#search-customer").serialize());
+                $("#customer-dropdown").slideDown(500);
+            }
+            else
+                $("#customer-dropdown").slideUp(500);
+        });
+
+        $("#customer-dropdown").on('click','.list-customer', function (e) {
+            e.preventDefault();
+            $("#customer-info").html(
+                "<h5 style='float:left; margin-right: 20px'>"+$(this).html()+" </h5>" +
+                "<h5>points: "+$(this).data('points')+"</h5>"
+            );
+            $("#discount-input").html(
+                "<input type='number' value='"+$(this).data('points')+"' max="+parseInt($(this).data('points'))+"></input>" +
+                "<span style='margin-left: 20px; color:red'>- "+$(this).data('points')+"</span>"
+            );
+            $("#customer-dropdown").slideUp(500);
+        });
+
+        $("#transaction-submit").click(function () {
+            if(cart.length===0){
+                alert('You haven\'t pick a product!');
+                return;
+            }
+            insertTransaction(cart, cartQty, null);
+        });
+
+        //paging previous-next
+        $(".previous, .next").click(function (e) {
+            e.preventDefault();
+            var link= $(this).children('a').attr('href');
+            getContent(link, link.substring(link.length, link.lastIndexOf('=')+1));
+        });
+
     </script>
 </body>
 </html>

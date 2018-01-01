@@ -22,7 +22,7 @@
             <ul class="nav navbar-nav navbar-right">
                 <li class="dropdown">
                     <a class="dropdown-toggle" data-toggle="${(role=='admin')?'dropdown':'hidden'}" href="#">Hello, <c:out value="${user}"/></a>
-                    <ul class="dropdown-menu">
+                    <ul class="dropdown-menu dropdown-menu-left">
                         <c:if test="${fn:contains(pageContext.request.requestURI, '/cashier.jsp')}">
                             <li><a href="<c:url value="${(role=='admin')?'admin.jsp':'#'}"/>">Go to admin</a></li>
                         </c:if>
@@ -35,5 +35,16 @@
             </ul>
         </div>
     </nav>
+    <script>
+        $("a[href='/logout']").click(function () {
+           localStorage.clear();
+        });
+
+        $(".navbar-brand").click(function (e) {
+            e.preventDefault();
+            $("#admin-sidebar").animate({width: 'toggle'},1000);
+        });
+    </script>
+
 </body>
 </html>
