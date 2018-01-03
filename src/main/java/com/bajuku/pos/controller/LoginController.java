@@ -35,7 +35,7 @@ public class LoginController extends HttpServlet {
         try {
             model= userRepository.authenticateUser(username,password);
 
-            if (model.getFullname()==null){
+            if (model==null){
                 req.setAttribute("error", "Wrong username or password");
                 req.getRequestDispatcher("/").forward(req, resp);
             }
