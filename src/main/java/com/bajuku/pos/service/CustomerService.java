@@ -9,6 +9,8 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
@@ -22,48 +24,40 @@ public class CustomerService extends HttpServlet{
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("application/json");
         resp.setCharacterEncoding("UTF-8");
+        String array=null;
+        int count=0;
 
         if(req.getParameter("search-customer")!=null){
             try {
-                String array= mapper.writeValueAsString(repository.getSearchCustomer(
+                array= mapper.writeValueAsString(repository.getSearchCustomer(
                         req.getParameter("search-customer").toLowerCase(),
                         Integer.parseInt(req.getParameter("page"))));
-                int count= repository.getCountCustomer(req.getParameter("search-customer"));
-
-                resp.getWriter().write("{\"count\": "+count+", \"array\": "+array+"}");
-
+                count= repository.getCountCustomer(req.getParameter("search-customer"));
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
         else {
             try {
-                String jsonString = mapper.writeValueAsString(repository.getAllCustomer());
-                resp.getWriter().write(jsonString);
+                array = mapper.writeValueAsString(repository.getAllCustomer(
+                        Integer.parseInt(req.getParameter("page"))));
+                count = repository.getCountCustomer(null);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
+        resp.getWriter().write("{\"array\": "+array+", \"count\": "+count+"}");
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        System.out.println(req.getParameter("data"));
         CustomerModel model= mapper.readValue(req.getParameter("data"),CustomerModel.class);
         PrintWriter out= resp.getWriter();
+        HttpSession session= req.getSession(false);
         try {
-            out.print(repository.insertCustomer(model));
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        CustomerModel model= mapper.readValue(req.getParameter("data"),CustomerModel.class);
-        PrintWriter out= resp.getWriter();
-        try {
-            out.print(repository.updateCustomer(model));
+            out.print(repository.insertCustomer(model,
+                    Integer.parseInt(session.getAttribute("id").toString())
+            ));
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -71,8 +65,29 @@ public class CustomerService extends HttpServlet{
 
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        PrintWriter out= resp.getWriter();
+        HttpSession session= req.getSession(false);
         try {
-            repository.deleteCustomer(Integer.parseInt(req.getParameter("id")));
+            out.print(repository.deleteCustomer(Integer.parseInt(req.getParameter("id")),
+                    Integer.parseInt(session.getAttribute("id").toString())));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        BufferedReader reader= req.getReader();
+        String json= reader.readLine();
+        System.out.println(json);
+
+        CustomerModel model= mapper.readValue(json,CustomerModel.class);
+        PrintWriter out= resp.getWriter();
+        HttpSession session= req.getSession(false);
+        try {
+            out.print(repository.updateCustomer(model,
+                    Integer.parseInt(session.getAttribute("id").toString())
+            ));
         } catch (SQLException e) {
             e.printStackTrace();
         }
