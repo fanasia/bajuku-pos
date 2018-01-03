@@ -1,7 +1,6 @@
 package com.bajuku.pos.model;
 
 import java.sql.Timestamp;
-import java.util.Date;
 
 public class UserModel {
     private int id;
@@ -10,6 +9,17 @@ public class UserModel {
     private String fullname;
     private Timestamp log_time;
     private String user_role;
+
+    public UserModel(){}
+
+    public UserModel(int id, String username, String password, String fullname, Timestamp log_time, String user_role){
+        this.id=id;
+        this.username=username;
+        this.password=password;
+        this.fullname=fullname;
+        this.log_time=log_time;
+        this.user_role=user_role;
+    }
 
     public int getId() {
         return id;

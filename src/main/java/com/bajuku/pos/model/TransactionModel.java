@@ -8,6 +8,16 @@ public class TransactionModel {
     private Timestamp time;
     private float value;
     private int quantity;
+    private float discount;
+
+    public TransactionModel(){}
+
+    public TransactionModel(Timestamp time, float value, int quantity, float discount){
+        this.time=time;
+        this.value=value;
+        this.quantity=quantity;
+        this.discount=discount;
+    }
 
     public int getId() {
         return id;
@@ -47,5 +57,13 @@ public class TransactionModel {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    public float getDiscount() {
+        return discount;
+    }
+
+    public void setDiscount(float discount) {
+        this.discount = discount;
     }
 }
