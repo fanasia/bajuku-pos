@@ -26,7 +26,7 @@
                         <li class="form-inline">
                             <form id="search-daily" action="" method="get">
                                 <div class="input-group">
-                                    <input name="search-daily" class="form-control" type="date">
+                                    <input name="search-ledger" class="form-control" type="date">
                                     <div class="input-group-btn">
                                         <button class="search-btn btn btn-default">
                                             <i class="glyphicon glyphicon-search"></i>
@@ -38,18 +38,23 @@
                     </ul>
                 </div>
 
-                <table id="daily-body" class="table head table-striped">
+                <table class="table head table-striped">
                     <thead>
                     <tr>
                         <th class="col-sm-1">Date</th>
                         <th class="col-sm-1">Value</th>
                         <th class="col-sm-1">Quantity</th>
                         <th class="col-sm-1">Discount</th>
+                        <th class="col-sm-1">View</th>
                     </tr>
                     </thead>
-                    <tbody>
-                    </tbody>
                 </table>
+                <div style="overflow-y: scroll; overflow-x:scroll; height: 350px">
+                    <table id="daily-body" class="table head table-striped">
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
 
                 <div class="col-md-12">
                     <ul class="pager">
@@ -66,7 +71,7 @@
                         <li class="form-inline">
                             <form id="search-weekly" action="" method="get">
                                 <div class="input-group">
-                                    <input name="search-weekly" class="form-control" type="week">
+                                    <input name="search-ledger" class="form-control" type="week">
                                     <div class="input-group-btn">
                                         <button class="search-btn btn btn-default">
                                             <i class="glyphicon glyphicon-search"></i>
@@ -106,7 +111,7 @@
                         <li class="form-inline">
                             <form id="search-monthly" action="" method="get">
                                 <div class="input-group">
-                                    <input name="search-monthly" class="form-control" type="month">
+                                    <input name="search-ledger" class="form-control" type="month">
                                     <div class="input-group-btn">
                                         <button class="search-btn btn btn-default">
                                             <i class="glyphicon glyphicon-search"></i>
@@ -141,23 +146,7 @@
             </div>
 
             <div id="yearly-table" class="display-tab tab-pane fade">
-                <div class="col-md-12">
-                    <ul class="search-tab nav nav-pills navbar-right">
-                        <li class="form-inline">
-                            <form id="search-yearly" action="" method="get">
-                                <div class="input-group">
-                                    <input name="search-yearly" class="form-control" type="text">
-                                    <div class="input-group-btn">
-                                        <button class="search-btn btn btn-default">
-                                            <i class="glyphicon glyphicon-search"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </form>
-                        </li>
-                    </ul>
-                </div>
-
+                <div class="col-md-12"><h1></h1></div>
                 <table id="yearly-body" class="table head table-striped">
                     <thead>
                     <tr>
@@ -182,11 +171,71 @@
         </div>
     </div>
 
+    <div id="details" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+             <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Transaction Details</h4>
+                </div>
+                <div class="modal-body" style="overflow-y: scroll; height: 400px">
+                    <table id="details-table" class="table">
+                        <tbody>
+                        <%--template details--%>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
-        getTransaction("/api/transaction/daily/getall?page=0", 0);
-        getTransaction("/api/transaction/weekly/getall?page=0", 0);
-        getTransaction("/api/transaction/monthly/getall?page=0", 0);
-        getTransaction("/api/transaction/yearly/getall?page=0", 0);
+        getTransaction("/api/transaction/daily/getall?interval=day&page=0", 0);
+        getTransaction("/api/transaction/weekly/getall?interval=week&page=0", 0);
+        getTransaction("/api/transaction/monthly/getall?interval=month&page=0", 0);
+        getTransaction("/api/transaction/yearly/getall?interval=year&page=0", 0);
+
+        //search ledger
+        $("#search-daily, #search-weekly, #search-monthly").change(function () {
+            var interval;
+            console.log($(this).serialize());
+            if(this.id==='search-daily')
+                interval='day';
+            else if(this.id==='search-weekly')
+                interval='weeky';
+            else
+                interval='month';
+            getTransaction("/api/transaction/"+this.id.split('-')[1]+"/getsearch?interval="+ interval + $(this).serialize()+"&page=0",0);
+        });
+
+        //close view more
+        $("tbody").on('click', '.close-link-more', function (e) {
+            e.preventDefault();
+            $("tbody").find('.active').removeClass('active');
+            $("tbody").find(".daily-transaction").remove();
+            $(this).parent().html("<a class='link-more' href=''>View more</a>");
+        });
+
+        //view more
+        $("tbody").on('click', ".link-more", function (e) {
+            e.preventDefault();
+            //removes previous request
+            $("tbody").find('.close-link-more').click();
+
+            var date= $(this).parent().parent().children().eq(0).html().split(',')[0];
+            $(this).parent().parent().addClass("active");
+            getDailyTransaction(date);
+
+        });
+
+        //view details
+        $("tbody").on('click', ".link-details", function () {
+            console.log($(this).closest('tr').data('id'));
+            getDetails('/api/transaction/getdetails?id-details='+$(this).closest('tr').data('id'));
+        });
 
     </script>
 

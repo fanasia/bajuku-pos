@@ -98,7 +98,7 @@
                         </li>
                         <li class="nav navbar-right">
                             <button class="btn btn-default" data-toggle="modal" data-target="#add-member"><span class="glyphicon glyphicon-plus"></span></button>
-                            <button class="btn btn-default"><span class="glyphicon glyphicon-refresh"></span></button>
+                            <button id="btn-refresh" class="btn btn-default"><span class="glyphicon glyphicon-refresh"></span></button>
                         </li>
                     </ul>
                 </div>
@@ -151,7 +151,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-success">Submit</button>
+                    <button id="customer-submit" class="btn btn-success">Submit</button>
                 </div>
             </div>
         </div>
@@ -167,21 +167,34 @@
                 <div class="modal-body">
                     <div id="transaction-info" class="form-center form-horizontal">
                         <div class="form-group">
-                            <label class="control-label col-md-2 col-md-offset-2">Total: </label>
+                            <label class="control-label col-md-2 col-md-offset-3">Total: </label>
                             <div class="col-md-4">
                                 <span id="transaction-total"></span>
                             </div>
                         </div>
-
                         <div class="form-group">
-                            <label class="control-label col-md-2 col-md-offset-2" for="payment-input">Payment: </label>
+                            <label class="control-label col-md-2 col-md-offset-3">Points: </label>
+                            <div class="col-md-4">
+                                <span id="transaction-points"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-2 col-md-offset-3" for="payment-input">Payment: </label>
                             <div class="col-md-4">
                                 <input id="payment-input" class="form-control" type="text" >
                             </div>
                         </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-2 col-md-offset-3">Change: </label>
+                            <div class="col-md-4">
+                                <span id="transaction-change"></span>
+                            </div>
+                        </div>
+                        <span id="status-submit" class="hidden"></span>
                     </div>
                 </div>
                 <div class="modal-footer">
+                    <button class="btn btn-default print-btn"><span class="glyphicon glyphicon-print"></span> Print</button>
                     <button id="transaction-submit" class="btn btn-success">Confirm</button>
                 </div>
             </div>
@@ -204,14 +217,19 @@
         getcategories();
         checkCart(cart, cartQty);
 
+        $("#btn-refresh").click(function () {getcontent('/api/product/getall?limit=12&page=0',0);});
+
         $(".reset-btn").click(function () {
             if(confirm("Are you sure?")){
                 localStorage.clear();
+                cart.splice(0, cart.length());
+                cartQty.splice(0, cartQty.length());
                 calculateCart(0);
                 $("#cart-body").empty();
             }
         });
-        
+
+        //pick product
         $("#product-container").on('click', '.product-info', function () {
             var id= $(this).data('id');
             if($(this).children(".stock").html()==="Not in stock"){
@@ -236,7 +254,7 @@
                         $("#cart-body table").children("tbody").append(
                             "<tr data-id='" + $(this).data('id') + "'>" +
                             "<td class='col-sm-3'>" + $(this).children("a").html() + "</td>" +
-                            "<td class='col-sm-3'><input class='form-control' type='number' value='" + parseInt(qty) + "' max='" + $(this).children(".stock").html() + "'></td>" +
+                            "<td class='col-sm-3'><input class='form-control' type='number' value='" + parseInt(qty) + "' min='1' max='" + $(this).children(".stock").html() + "'></td>" +
                             "<td class='col-sm-4'>" +
                             "<div class='input-group'>" +
                             "<span class='input-group-addon'>IDR</span>\n" +
@@ -273,26 +291,24 @@
                 var id= $(this).parent().parent().data('id');
                 var decrease= $(this).parent().siblings().eq(1).children().eq(0).val();
                 var price= $(this).parent().siblings().eq(2).children().eq(0).children().eq(1).val();
-
                 $(this).parent().parent().remove();
 
-                //update localStorage
-                cart.splice(cart.indexOf(id),1);
-                cartQty.splice(cartQty.indexOf(id),1);
-                console.log(cart+" "+cartQty);
+                cart.splice(cart.indexOf(id.toString()),1);
+                cartQty.splice(cartQty.indexOf(id.toString()),1);
 
+                updateLocalStorage(id);
                 calculateCart(-(decrease*price));
             }
         });
 
+        //search members
         $("input[name=search-customer]").keyup(function () {
             if($(this).val().length>0){
-                console.log(($("#search-customer").serialize()));
                 getSearchMember("/api/customer/getSearch?"+$("#search-customer").serialize());
-                $("#customer-dropdown").slideDown(500);
+                $("#customer-dropdown").slideDown(200);
             }
             else
-                $("#customer-dropdown").slideUp(500);
+                $("#customer-dropdown").slideUp(200);
         });
 
         $("#customer-dropdown").on('click','.list-customer', function (e) {
@@ -302,18 +318,47 @@
                 "<h5>points: "+$(this).data('points')+"</h5>"
             );
             $("#discount-input").html(
-                "<input type='number' value='"+$(this).data('points')+"' max="+parseInt($(this).data('points'))+"></input>" +
-                "<span style='margin-left: 20px; color:red'>- "+$(this).data('points')+"</span>"
+                "<input type='number' id='discount-value' value='"+$(this).data('points')+"' max="+parseInt($(this).data('points'))+">" +
+                "<span id='discount-display' style='margin-left: 20px; color:red'> - "+$(this).data('points')*10+"</span>" +
+                "<button id='add-discount' class='btn btn-success' style='margin-left: 20px'>" +
+                "<span class='glyphicon glyphicon-plus'></span></button>"
             );
-            $("#customer-dropdown").slideUp(500);
+            $("#customer-dropdown").slideUp(200);
         });
 
+        //add discount
+        $("#discount-input").on('click', '#add-discount', function () {
+            addDiscount();
+        });
+
+        $("#discount-input").on('change', '#discount-value', function () {
+            $("#discount-display").html(" - " + $(this).val()*10);
+        });
+
+        //submit transaction & members
         $("#transaction-submit").click(function () {
             if(cart.length===0){
                 alert('You haven\'t pick a product!');
                 return;
             }
-            insertTransaction(cart, cartQty, null);
+            if($(".list-customer").data("id")!==null){
+                insertTransaction(cart, cartQty, $(".list-customer").data('id'), $("#discount-value").val(), $("#transaction-points").html());
+            }
+            else{
+                insertTransaction(cart, cartQty, null, null, null);
+            }
+        });
+
+        $("#customer-submit").click(function () {
+            var data={};
+            var url="/api/customer/insert";
+            data.id=null;
+            data.fullname= $("#input-customer-name").val();
+            data.email= $("#input-email").val();
+            data.phone= $("#input-phone").val();
+            data.points= 0;
+            console.log(data);
+            insertMember(url, JSON.stringify(data));
         });
 
         //paging previous-next
@@ -321,6 +366,57 @@
             e.preventDefault();
             var link= $(this).children('a').attr('href');
             getContent(link, link.substring(link.length, link.lastIndexOf('=')+1));
+        });
+
+        //change quantity
+        $("#cart-body").on('blur','input[type=number]', function () {
+            if($(this).val()> $(this).attr('max')){
+                $(this).val($(this).attr('max'));
+            }
+            else if($(this).val()<$(this).attr('min')){
+                $(this).val(1);
+            }
+            var idx= cart.indexOf($(this).closest("tr").data('id').toString());
+            var price= parseFloat($(this).parent().siblings().eq(1).children().children().eq(1).val());
+            var decrease= cartQty[idx] * price;
+            calculateCart(-decrease);
+            calculateCart($(this).val()* price);
+            cartQty[idx]= $(this).val().toString();
+
+            updateLocalStorage();
+        });
+
+        //searching
+        $("#search-product").on('change keyup', function () {
+            getcontent("/api/product/search?"+$(this).serialize()+"&limit=12&page=0", 0, 12);
+        });
+
+        $("#payment-input").change(function () {
+           if($(this).val()<$("#total-input").data('value')){
+               alert("Your payment is underpaid");
+               return;
+           }
+           $("#transaction-change").html(
+               ($(this).val()-$("#total-input").data("value")).toLocaleString(
+                   'en-us', {style: 'currency', currency: 'IDR', minimumFractionDigits: 2}
+               ));
+        });
+
+        $(".print-btn").click(function() {
+            var request= 'payment='+$("#payment-input").val()+'&discount='+($("#discount-input").val()*10)+'&customer='+$("#customer-info").children('a').html();
+            console.log(request);
+            if ($("#status-submit").html()===null||$("#status-submit").html()==='') {
+                alert("You haven\'t submitted the transaction");
+            }
+            else if($("#payment-input").val()===null){
+                alert("Payment must be inserted");
+            }
+            else {
+                var request= 'payment='+$("#payment-input").val()+'&discount='+($("#discount-input").val()*10)+'&customer='+$("#customer-info").children('a').html();
+                console.log(request);
+                createPage();
+                $("#status-submit").html("");
+            }
         });
 
     </script>

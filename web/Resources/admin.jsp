@@ -76,14 +76,14 @@
             var tr= $(this).parent().parent();
             tr.addClass("hidden");
             var form= "<tr class='form-inline edit-form' data-id='"+tr.data('id')+"'>";
-            var role;
+            var role, category;
 
             $.each(tr.children(), function (key, value) {
                 //checks className
                 var cls= value.className.split(' ');
                 if(cls[1]==='selection'){
                     form+="<td id='edit-selection' class='"+cls[0]+"'></td>";
-                    role=value.innerHTML;
+                    (tr.closest('table').attr('id')==='user-body')?role= value.innerHTML : category= value.dataset.cat;
                 }
                 else if(cls[1]==='non-editable'){
                     form+="<td class='"+cls+"'>"+value.innerHTML+"</td>";
@@ -105,7 +105,9 @@
             tr.after(form);
 
             //checks product or user
-            $("#edit-selection").html($("#select-role").clone().val(role));
+            (tr.closest('table').attr('id')==='user-body')?
+                $("#edit-selection").html($("#select-role").clone().val(role)):
+                $("#edit-selection").html($("#input-categories").clone().val(category));
         });
 
         //remove edit form
@@ -130,36 +132,36 @@
             var url;
             var tr= $(this).parent().parent().find('input');
 
+            data.id= $(this).parent().parent().data('id');
             if(service[0]==='user'){
                 url="/api/user/update";
-                console.log(tr);
-
-                data.id= $(this).parent().parent().data('id');
                 data.fullname= tr.eq(0).val();
                 data.username= tr.eq(1).val();
                 data.password= null;
                 data.log_time= null;
-                data.user_role= tr.eq(2).val();
-
-                console.log(data);
+                data.user_role= $(this).parent().parent().find('#select-role').val();
             }
             else if(service[0]==='customer'){
                 url="/api/customer/update";
-
-                data.id= $(this).parent().parent().data('id');
                 data.fullname= tr.eq(0).val();
                 data.email= tr.eq(1).val();
                 data.phone= tr.eq(2).val();
                 data.points= tr.eq(3).val();
-
-                console.log(data);
             }
             else if(service[0]==='product'){
-
+                url="/api/product/update";
+                data.fullname= tr.eq(0).val();
+                data.category_id=$(this).parent().parent().find('#input-categories').val();
+                data.price= tr.eq(1).val();
+                data.stock= tr.eq(2).val();
+                data.mapping= tr.eq(3).val();
             }
-            else if(service[0]==='category'){
-
+            else if(service[0]==='categories'){
+                url="/api/categories/update";
+                data.fullname= tr.eq(0).val();
             }
+            console.log(data);
+            updatedata(url, JSON.stringify(data));
         });
 
         //paging previous-next

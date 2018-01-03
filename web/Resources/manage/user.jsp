@@ -121,20 +121,20 @@
                             <div class="form-group">
                                 <label class="control-label col-sm-offset-2 col-sm-2" for="input-user-name">New Password:</label>
                                 <div class="col-sm-6">
-                                    <input class="form-control" id="input-change" type="text" placeholder="Password">
+                                    <input class="form-control" id="input-change" type="password" placeholder="Password">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="control-label col-sm-offset-2 col-sm-2" for="input-username">Confirm Password:</label>
                                 <div class="col-sm-6">
-                                    <input class="form-control" id="input-confirmation" type="text">
+                                    <input class="form-control" id="input-confirmation" type="password">
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-success">Submit</button>
+                    <button id="update-password-submit" class="btn btn-success">Submit</button>
                 </div>
             </div>
         </div>
@@ -160,6 +160,17 @@
         $("#search-user").on('change keyup', function () {
             console.log($(this).serialize());
             getdata('/api/user/search?'+$(this).serialize()+"&page=0",0,10);
+        });
+
+        $("tbody").on('click', '.password-btn', function () {
+            $("#update-password-submit").attr('data-info', $(this).closest('tr').data('id'));
+        });
+
+        $("#update-password-submit").click(function () {
+            var data={};
+            data.id= $(this).data('info');
+            data.password= $('#input-change').val();
+            changePassword("/api/user/update/password", data);
         });
 
     </script>

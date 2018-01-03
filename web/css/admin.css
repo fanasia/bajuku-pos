@@ -20,7 +20,8 @@ body{
     margin-right: 10px;
 }
 .nav>li>a{
-    padding-left: 25px;
+    padding-left: 30px;
+    padding-right: 35px;
 }
 a{
     color: #03A3BB;
