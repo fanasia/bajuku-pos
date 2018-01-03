@@ -8,6 +8,7 @@ import java.util.ArrayList;
 public class CustomerRepository {
     private Connection conn= null;
     private PreparedStatement stmt=null;
+    private Statement log=null;
     private String sql=null;
 
     private ArrayList<CustomerModel> getObject(ResultSet rs) throws SQLException{
@@ -25,15 +26,18 @@ public class CustomerRepository {
         return models;
     }
 
-    private boolean executeStatement() throws SQLException{
+    private boolean executeStatement(String batch) throws SQLException{
         if(!stmt.execute()){
+            log.execute(batch);
             conn.commit();
+            log.close();
             stmt.close();
             conn.close();
             return true;
         }
         else{
             conn.rollback();
+            log.close();
             stmt.close();
             conn.close();
             return false;
@@ -62,12 +66,13 @@ public class CustomerRepository {
         return count;
     }
 
-    public ArrayList<CustomerModel> getAllCustomer() throws SQLException{
+    public ArrayList<CustomerModel> getAllCustomer(int page) throws SQLException{
         conn = Dbconnection.createConnection();
         ArrayList<CustomerModel> customerList;
-        sql="SELECT * FROM customer_tb LIMIT 10";
+        sql="SELECT * FROM customer_tb LIMIT 10 OFFSET ? *10";
 
         stmt= conn.prepareStatement(sql);
+        stmt.setInt(1, page);
         ResultSet rs= stmt.executeQuery();
 
         customerList = getObject(rs);
@@ -77,7 +82,7 @@ public class CustomerRepository {
         return customerList;
     }
 
-    public boolean insertCustomer(CustomerModel model) throws SQLException{
+    public boolean insertCustomer(CustomerModel model, int user_id) throws SQLException{
         System.out.println(model.getFullname());
         conn = Dbconnection.createConnection();
         conn.setAutoCommit(false);
@@ -90,20 +95,27 @@ public class CustomerRepository {
         stmt.setString(3, model.getFullname());
         stmt.setInt(4, model.getPoints());
 
-        return executeStatement();
+        String batch= "INSERT INTO log_tb (id,action, alter_time, alter_description) VALUES ("+user_id+",'insert', CURRENT_TIMESTAMP ,'insert new customer')";
+        log= conn.createStatement();
+
+        return executeStatement(batch);
     }
 
-    public boolean deleteCustomer(int id) throws SQLException{
+    public boolean deleteCustomer(int id, int user_id) throws SQLException{
         conn = Dbconnection.createConnection();
         conn.setAutoCommit(false);
         sql="DELETE FROM customer_tb WHERE id= ?";
 
         stmt= conn.prepareStatement(sql);
         stmt.setInt(1, id);
-        return executeStatement();
+
+        String batch= "INSERT INTO log_tb (id,action, alter_time, alter_description) VALUES ("+user_id+",'delete', CURRENT_TIMESTAMP ,'delete customer id: "+id+"')";
+        log= conn.createStatement();
+
+        return executeStatement(batch);
     }
 
-    public boolean updateCustomer(CustomerModel model) throws SQLException{
+    public boolean updateCustomer(CustomerModel model, int user_id) throws SQLException{
         conn = Dbconnection.createConnection();
         conn.setAutoCommit(false);
         sql="UPDATE customer_tb " +
@@ -119,7 +131,11 @@ public class CustomerRepository {
         stmt.setString(3, model.getFullname());
         stmt.setInt(4, model.getPoints());
         stmt.setInt(5, model.getId());
-        return executeStatement();
+
+        String batch= "INSERT INTO log_tb (id,action, alter_time, alter_description) VALUES ("+user_id+",'update', CURRENT_TIMESTAMP ,'update customer id: "+model.getId()+"')";
+        log= conn.createStatement();
+
+        return executeStatement(batch);
     }
 
     public ArrayList<CustomerModel> getSearchCustomer(String query, int page) throws SQLException{

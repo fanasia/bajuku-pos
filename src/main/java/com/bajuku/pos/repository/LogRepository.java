@@ -2,10 +2,7 @@ package com.bajuku.pos.repository;
 
 import com.bajuku.pos.model.LogModel;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 
 public class LogRepository {
@@ -29,12 +26,52 @@ public class LogRepository {
         return models;
     }
 
-    public ArrayList<LogModel> getAllLog() throws SQLException{
+    public ArrayList<LogModel> getAllLog(int page) throws SQLException{
         conn= Dbconnection.createConnection();
-        ArrayList<LogModel> logList= null;
-        sql= "SELECT * FROM log_tb LIMIT 10";
+        ArrayList<LogModel> logList;
+        sql= "SELECT * FROM log_tb ORDER BY alter_time DESC LIMIT 10 OFFSET ? *10";
 
         stmt= conn.prepareStatement(sql);
+        stmt.setInt(1, page);
+        ResultSet rs= stmt.executeQuery();
+        logList= getObject(rs);
+
+        return logList;
+    }
+
+    public int getLogCount(Timestamp begin, Timestamp end) throws SQLException{
+        conn= Dbconnection.createConnection();
+        int count=0;
+        if(begin==null&&end==null){
+            sql="SELECT count(*) as counter FROM log_tb";
+            stmt= conn.prepareStatement(sql);
+        }
+        else {
+            sql = "SELECT count(id) AS counter FROM log_tb WHERE alter_time>=? AND alter_time<=?";
+            stmt= conn.prepareStatement(sql);
+            stmt.setTimestamp(1, begin);
+            stmt.setTimestamp(2, end);
+        }
+        ResultSet rs= stmt.executeQuery();
+
+        if(rs.next()){
+            count= rs.getInt("counter");
+        }
+        rs.close();
+        stmt.close();
+        conn.close();
+        return count;
+    }
+
+    public ArrayList<LogModel> getSearchLog(Timestamp begin, Timestamp end, int page) throws SQLException{
+        conn= Dbconnection.createConnection();
+        ArrayList<LogModel> logList= null;
+        sql= "SELECT * FROM log_tb WHERE alter_time>=? AND alter_time<=? LIMIT 10 OFFSET ? *10";
+
+        stmt= conn.prepareStatement(sql);
+        stmt.setTimestamp(1, begin);
+        stmt.setTimestamp(2, end);
+        stmt.setInt(3, page);
         ResultSet rs= stmt.executeQuery();
         logList= getObject(rs);
 
