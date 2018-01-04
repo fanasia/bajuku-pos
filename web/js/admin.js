@@ -203,6 +203,7 @@ var getTransaction= function (url, page) {
         dataType: "JSON",
         success: function (data) {
             if(data.array.length>0){
+                $("#" + str[3] + "-body").children("tbody").empty();
                 if(str[3]==='daily'){
                     $.each(data.array, function (key, val) {
                         $("#" + str[3] + "-body").children("tbody").append(
@@ -226,11 +227,29 @@ var getTransaction= function (url, page) {
                             "<td class='col-sm-1' style='color: red'>" + val.discount + "</td>" +
                             "</tr>"
                         );
+                        //create chart
+                        if(str[3]==='yearly'){
+                            var years=['2014','2015','2016','2017'], value= [0,0,0,0];
+                            years.push(new Date(val.time).getFullYear());
+                            value.push(val.value);
+                            new Chart(document.getElementById('yearly-chart').getContext('2d'), {
+                                type: 'line',
+                                data: {
+                                    labels: years,
+                                    datasets: [{
+                                        label: '# of Transactions',
+                                        data: value,
+                                        backgroundColor: 'rgb(255, 99, 132)',
+                                        borderColor: 'rgb(255, 99, 132)'
+                                    }]
+                                }
+                            });
+                        }
                     });
                 }
             }
             else{
-                $("#"+str[3]+"-body").children("tbody").append(
+                $("#"+str[3]+"-body").children("tbody").empty().append(
                     "<tr><td colspan='5'>No data found</td></tr>"
                 )
             }

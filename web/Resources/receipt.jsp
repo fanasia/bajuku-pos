@@ -54,7 +54,8 @@
             function printReceipt() {
                 document.getElementsByTagName('span')[1].innerHTML= Date();
                 document.getElementsByTagName('button')[0].remove();
-                var printWindow = window.open('','', 'height=400, width=800').document.write(document.getElementsByTagName('body')[0].outerHTML);
+                var printWindow = window.open('','', 'height=400, width=800');
+                printWindow.document.write(document.getElementsByTagName('body')[0].outerHTML);
                 printWindow.focus();
                 printWindow.print();
             }

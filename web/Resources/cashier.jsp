@@ -341,11 +341,13 @@
                 alert('You haven\'t pick a product!');
                 return;
             }
-            if($(".list-customer").data("id")!==null){
-                insertTransaction(cart, cartQty, $(".list-customer").data('id'), $("#discount-value").val(), $("#transaction-points").html());
+            else if($("#payment-input").val()===null){
+                alert("You haven\'t input your payment")
             }
-            else{
-                insertTransaction(cart, cartQty, null, null, null);
+            else {
+                ($(".list-customer").data("id") !== null) ?
+                    insertTransaction(cart, cartQty, $(".list-customer").data('id'), $("#discount-value").val(), $("#transaction-points").html())
+                    : insertTransaction(cart, cartQty, null, null, null);
             }
         });
 
@@ -403,8 +405,14 @@
         });
 
         $(".print-btn").click(function() {
-            var request= 'payment='+$("#payment-input").val()+'&discount='+($("#discount-input").val()*10)+'&customer='+$("#customer-info").children('a').html();
+            var param= {};
+            param.payment= $("#payment-input").val();
+            param.discount= $("#discount-input").val()*10;
+            param.customer= $("#customer-info").children('a').html();
+
+            var request= 'payment='+$("#payment-input").val()+'&discount='+($("#discount-value").val()*10)+'&customer='+$("#customer-info").children('a').html();
             console.log(request);
+
             if ($("#status-submit").html()===null||$("#status-submit").html()==='') {
                 alert("You haven\'t submitted the transaction");
             }
@@ -412,9 +420,7 @@
                 alert("Payment must be inserted");
             }
             else {
-                var request= 'payment='+$("#payment-input").val()+'&discount='+($("#discount-input").val()*10)+'&customer='+$("#customer-info").children('a').html();
-                console.log(request);
-                createPage();
+                createPage(request);
                 $("#status-submit").html("");
             }
         });

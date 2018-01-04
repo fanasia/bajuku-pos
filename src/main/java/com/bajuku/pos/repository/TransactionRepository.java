@@ -179,6 +179,7 @@ public class TransactionRepository {
                 stmt.setNull(4, Types.NUMERIC);
             }
             else {
+                //replace (" ") from points & quantity
                 stmt.setFloat(4, Float.parseFloat(discount.replaceAll("^\"|\"$", ""))*10);
             }
 
@@ -245,7 +246,7 @@ public class TransactionRepository {
                     stmt.setDouble(1, 0);
                 }
                 else {
-                    stmt.setDouble(1, Double.parseDouble(discount.replaceAll("^\"|\"$", "")) * 0.1);
+                    stmt.setDouble(1, Double.parseDouble(discount.replaceAll("^\"|\"$", "")));
                 }
                 stmt.setDouble(2, Math.floor(Double.parseDouble(points.replaceAll("^\"|\"$", ""))));
                 stmt.setInt(3, Integer.parseInt(customer_id));

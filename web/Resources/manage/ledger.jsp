@@ -9,6 +9,7 @@
 <html>
 <head>
     <title>Title</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
 </head>
 <body>
     <div class="inner-content container-fluid">
@@ -146,7 +147,9 @@
             </div>
 
             <div id="yearly-table" class="display-tab tab-pane fade">
-                <div class="col-md-12"><h1></h1></div>
+                <div class="col-md-12">
+                    <canvas id="yearly-chart" width="200" height="50"></canvas>
+                </div>
                 <table id="yearly-body" class="table head table-striped">
                     <thead>
                     <tr>
@@ -205,10 +208,10 @@
             if(this.id==='search-daily')
                 interval='day';
             else if(this.id==='search-weekly')
-                interval='weeky';
+                interval='week';
             else
                 interval='month';
-            getTransaction("/api/transaction/"+this.id.split('-')[1]+"/getsearch?interval="+ interval + $(this).serialize()+"&page=0",0);
+            getTransaction("/api/transaction/"+this.id.split('-')[1]+"/getsearch?interval="+ interval +"&"+ $(this).serialize()+"&page=0",0);
         });
 
         //close view more
