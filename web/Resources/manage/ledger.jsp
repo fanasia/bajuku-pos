@@ -211,7 +211,7 @@
                 interval='week';
             else
                 interval='month';
-            getTransaction("/api/transaction/"+this.id.split('-')[1]+"/getsearch?interval="+ interval +"&"+ $(this).serialize()+"&page=0",0);
+            getTransaction("/api/transaction/"+this.id.split('-')[1]+"/getsearch?interval="+ interval +"&"+ $(this).serialize().replace('W','')+"&page=0",0);
         });
 
         //close view more

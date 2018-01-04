@@ -40,10 +40,10 @@ public class PrintController extends HttpServlet{
         else
             req.setAttribute("customer", req.getParameter("customer"));
         req.setAttribute("payment", req.getParameter("payment"));
-        if(req.getParameter("discount")==null){
+        if(req.getParameter("discount")==null||req.getParameter("discount").equals("NaN")){
             req.setAttribute("discount", 0);
         }
-        req.setAttribute("discount", req.getParameter("discount"));
+        else req.setAttribute("discount", req.getParameter("discount"));
 
         req.getRequestDispatcher("/receipt.jsp").forward(req, resp);
     }

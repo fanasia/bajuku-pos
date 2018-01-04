@@ -240,16 +240,11 @@ public class TransactionRepository {
 
         //update customer points
         if(customer_id!=null) {
-                update = "UPDATE customer_tb SET points= (points - ? + ?) WHERE id=?";
+            int decreement= (int)Math.floor(Double.parseDouble(points.replaceAll("^\"|\"$", "")))-Integer.parseInt(discount.replaceAll("^\"|\"$", ""));
+            update = "UPDATE customer_tb SET points= (points + ?) WHERE id=?";
                 stmt = conn.prepareStatement(update);
-                if(discount==null){
-                    stmt.setDouble(1, 0);
-                }
-                else {
-                    stmt.setDouble(1, Double.parseDouble(discount.replaceAll("^\"|\"$", "")));
-                }
-                stmt.setDouble(2, Math.floor(Double.parseDouble(points.replaceAll("^\"|\"$", ""))));
-                stmt.setInt(3, Integer.parseInt(customer_id));
+                stmt.setInt(1, decreement);
+                stmt.setInt(2, Integer.parseInt(customer_id));
             stmt.execute();
             stmt.close();
         }
