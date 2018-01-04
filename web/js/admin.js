@@ -151,8 +151,10 @@ var insertdata= function (url, object) {
         success: function (status) {
             console.log(status);
             //reload table
+            //INI YANG GUA UBAH
+            $('#add-' + url.split('/')[2]).modal('toggle');
             $("#"+url.split('/')[2]+"-body").children("tbody").empty();
-            getdata("/api/"+url.split('/')[2]+"/getall", 0, (url.split('/')[2]==='product')?7:10);
+            getdata("/api/"+url.split('/')[2]+"/getall?page=0", 0, (url.split('/')[2]==='product')?7:10);
         },
         error: function (status) {
             console.log(status);
