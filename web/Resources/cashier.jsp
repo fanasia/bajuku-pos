@@ -10,7 +10,7 @@
 <html>
 <head>
     <link rel="stylesheet" href="../css/bootstrap-3.3.7/dist/css/bootstrap.min.css">
-    <script src="../js/jquery-3.2.1.js"></script>
+    <script src="../css/bootstrap-3.3.7/dist/js/jquery-3.2.1.js"></script>
     <script src="../css/bootstrap-3.3.7/dist/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="../css/cashier.css">
     <script src="../js/cashier.js"></script>
@@ -23,40 +23,37 @@
         <div class="row">
             <div id="left-col" class="col-md-5 col-sm-5 col-xs-12">
                 <!-- Left -->
-                <div class="col-md-12 dropdown">
-                    <form id="search-customer" class="form-inline">
-                        <span class="symbol glyphicon glyphicon-user"></span>
-                        <div class="form-group has-feedback">
-                                <input class="form-control" name="search-customer" type="text">
-                                <span class="glyphicon glyphicon-search form-control-feedback"></span>
-                        </div>
-                        <ul id="customer-dropdown" class="list-group dropdown-menu">
-                            <%--template members--%>
-                        </ul>
-                    </form>
+                <ul class="nav">
+                    <li class="nav navbar-left">
+                        <form id="search-product" class="form-inline" action="" method="get">
+                            <div class="input-group">
+                                <span class="input-group-addon">
+                                    <select id="filter-categories" name="select-categories">
+                                    </select>
+                                </span>
+                                <input name="search-product" class="form-control" type="text" placeholder="search-product">
+                                <div class="input-group-btn">
+                                    <button class="search-btn btn btn-default">
+                                        <i class="glyphicon glyphicon-search"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </li>
+                </ul>
+
+                <div id="product-container" class="well col-md-12 col-sm-12 col-xs-12">
+                    <%--template product--%>
                 </div>
 
-                <div id="customer-info" class="col-md-12">
-                    <h4>No member</h4>
+                <div class="col-md-12">
+                    <ul class="pager">
+                        <li id="cashier-previous" class="previous"><a href="">Previous</a></li>
+                        <li id="cashier-count" class="count"></li>
+                        <li id="cashier-next" class="next"><a href="">Next</a></li>
+                    </ul>
                 </div>
-                <div id="cart">
-                    <table id="cart-header" class="table">
-                        <thead>
-                            <tr>
-                                <th class="col-sm-3">Name</th>
-                                <th class="col-sm-3">Quantity</th>
-                                <th class="col-sm-4">Price</th>
-                                <th class="col-sm-2">Action</th>
-                            </tr>
-                        </thead>
-                    </table>
-                    <div id="cart-body">
-                        <table class="table">
-                            <tbody id="cart-inner-body">
-                            <%--template items--%>
-                            </tbody>
-                        </table>
-                    </div>
+
                     <div id="cart-info" class="well col-md-12">
                         <table class="table table-bordered">
                             <tr>
@@ -73,7 +70,6 @@
                             </tr>
                         </table>
                     </div>
-                </div>
             </div>
 
             <div id="right-col" class="col-md-7 col-sm-7 col-xs-12">
@@ -81,20 +77,18 @@
                 <div class="col-md-12 col-sm-12">
                     <ul class="nav">
                         <li class="nav navbar-left">
-                            <form id="search-product" class="form-inline" action="" method="get">
-                                <div class="input-group">
-                                <span class="input-group-addon">
-                                    <select id="filter-categories" name="select-categories">
-                                    </select>
-                                </span>
-                                    <input name="search-product" class="form-control" type="text" placeholder="search-product">
-                                    <div class="input-group-btn">
-                                        <button class="search-btn btn btn-default">
-                                            <i class="glyphicon glyphicon-search"></i>
-                                        </button>
+                            <div class="col-md-12 dropdown">
+                                <form id="search-customer" class="form-inline">
+                                    <span class="symbol glyphicon glyphicon-user"></span>
+                                    <div class="form-group has-feedback">
+                                        <input class="form-control" name="search-customer" type="text">
+                                        <span class="glyphicon glyphicon-search form-control-feedback"></span>
                                     </div>
-                                </div>
-                            </form>
+                                    <ul id="customer-dropdown" class="list-group dropdown-menu">
+                                        <%--template members--%>
+                                    </ul>
+                                </form>
+                            </div>
                         </li>
                         <li class="nav navbar-right">
                             <button class="btn btn-default" data-toggle="modal" data-target="#add-member"><span class="glyphicon glyphicon-plus"></span></button>
@@ -103,19 +97,33 @@
                     </ul>
                 </div>
 
-                <div id="product-container" class="well col-md-12 col-sm-12 col-xs-12">
-                    <%--template product--%>
+                <div id="customer-info" class="col-md-12">
+                    <h4>No member</h4>
                 </div>
-                <div class="col-md-12">
-                    <ul class="pager">
-                        <li id="cashier-previous" class="previous"><a href="">Previous</a></li>
-                        <li id="cashier-count" class="count"></li>
-                        <li id="cashier-next" class="next"><a href="">Next</a></li>
-                    </ul>
-                </div>
-                <div class="col-md-12">
-                    <button class="reset-btn btn btn-block btn-warning">Reset</button>
-                    <button class="continue-btn btn btn-block btn-success" data-toggle="modal" data-target="#transaction-detail">Continue</button>
+
+                <div id="cart">
+                    <table id="cart-header" class="table">
+                        <thead>
+                        <tr>
+                            <th class="col-sm-3">Name</th>
+                            <th class="col-sm-3">Quantity</th>
+                            <th class="col-sm-4">Price</th>
+                            <th class="col-sm-2">Action</th>
+                        </tr>
+                        </thead>
+                    </table>
+                    <div id="cart-body">
+                        <table class="table">
+                            <tbody id="cart-inner-body">
+                            <%--template items--%>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="col-md-12">
+                        <button class="reset-btn btn btn-block btn-warning">Reset</button>
+                        <button class="continue-btn btn btn-block btn-success" data-toggle="modal" data-target="#transaction-detail">Continue</button>
+                    </div>
                 </div>
             </div>
         </div>
